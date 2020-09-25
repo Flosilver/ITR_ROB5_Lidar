@@ -9,10 +9,10 @@ SRC := $(wildcard $(SRC_DIR)/*.cpp)
 OBJ := $(addprefix $(OBJ_DIR)/, $(notdir $(patsubst %.cpp, %.o, $(SRC))))
 
 CC := g++
-INCLUDE := -Iinclude
+INCLUDE := -Iinclude -I/usr/local/include
 CFLAGS := -g -Wall -std=c++11
-LDFLAGS := 
-LIBFLAG := 
+LDFLAGS := -L/usr/local/lib
+LIBFLAG := -lwiringPi -lpthread
 
 .PHONY: all clean mrproper remake rerun
 
@@ -20,7 +20,7 @@ LIBFLAG :=
 all: $(EXE)
 
 $(EXE): $(OBJ)
-	$(CC) $^ -o $@ $(INCLUDE) $(LIBFLAG)
+	$(CC) $^ -o $@ $(INCLUDE) $(LDFLAGS) $(LIBFLAG)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
 	$(CC) -c $< -o $@ $(CFLAGS) $(INCLUDE) $(LIBFLAG)
