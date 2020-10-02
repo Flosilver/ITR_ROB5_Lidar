@@ -1,16 +1,31 @@
 #include <stdio.h>
-#include <iostream.h>
+#include <iostream>
 #include <unistd.h>
 
 #include <wiringPi.h>
+#include <softPwm.h>
+
+using namespace std;
 
 
-int main(vois){
+int main(void){
     wiringPiSetup();     // setup the library
-    pinMode(1, PWM_OUTPUT);
+    cout << "wiring PI seted up\n";
+    pinMode(22, OUTPUT);
+    digitalWrite(22,LOW);
+    cout << "pin mode seted up to OUTPUT with LOW value\n";
 
-    pwmSetClock(384); //clock at 50kHz (20us tick)
-    pwmSetRange(1000); //range at 1000 ticks (20ms)
-    pwmWrite(1, 75);  //theretically 50 (1ms) to 100 (2ms) on my servo 30-130 works ok
+    if (softPwmCreate(22,0,100) != 0){
+        cerr << "***ERROR: softPwmCreate/n";
+    }
+    softPwmWrite(22,0);
+    while(1){
+        softPwmWrite(22,4);
+        delay(1000);
+
+        softPwmWrite(22,22);
+        delay(1000);
+    }
+
     return 0 ;
 }
