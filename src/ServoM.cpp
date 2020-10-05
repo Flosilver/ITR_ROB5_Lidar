@@ -2,11 +2,11 @@
 
 using namespace std;
 
-ServoM::ServoM(int nb_pin, float min_duty=3, float max_duty=12){
-    _pin = nb_pin;
+ServoM::ServoM(int nb_pin, float min_duty, float max_duty){
+    pin_ = nb_pin;
         
-    _min = min_duty;
-    _max = max_duty;
+    min_ = min_duty;
+    max_ = max_duty;
     
     // shit pin gestion: TODO
 }
@@ -16,22 +16,22 @@ ServoM::~ServoM(){
     // liberation de la pin: TODO
 }
 
-const float& ServoM::angleToPWM(float angle) const{
+float ServoM::angleToPWM(float angle) const{
     if (angle < 0){
-        return _min;
+        return min_;
     }
     if (angle > 180){
-        return _max;
+        return max_;
     }
-    return (_max - _min) / 180 + _min;
+    return (max_ - min_) / 180 + min_;
 }
 
 const float& ServoM::getAngle() const{
-    return _angle;
+    return angle_;
 }
 
 void ServoM::rotate(float angle){
-    _angle = angleToPWM(angle);
+    angle_ = angleToPWM(angle);
 
     // shit motor gestion : TODO
 }

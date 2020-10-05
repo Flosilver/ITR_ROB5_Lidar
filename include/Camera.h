@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <unistd.h>
-#include <iostream.h>
+#include <iostream>
 #include <stdlib.h>
 
 #include <wiringPi.h>
@@ -12,8 +12,8 @@
 class Camera
 {
     protected:
-        ServoM _pan;
-        ServoM _tilt;
+        ServoM* pan_;
+        ServoM* tilt_;
 
     public:
         Camera(int pan_pin, int tilt_pin);

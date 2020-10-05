@@ -8,7 +8,7 @@ INCLUDE_DIR := include
 SRC := $(wildcard $(SRC_DIR)/*.cpp)
 OBJ := $(addprefix $(OBJ_DIR)/, $(notdir $(patsubst %.cpp, %.o, $(SRC))))
 
-CC := g++
+CXX := g++
 INCLUDE := -Iinclude -I/usr/local/include
 CFLAGS := -g -Wall -std=c++11
 LDFLAGS := -L/usr/local/lib
@@ -20,10 +20,10 @@ LIBFLAG := -lwiringPi -lpthread
 all: $(EXE)
 
 $(EXE): $(OBJ)
-	$(CC) $^ -o $@ $(INCLUDE) $(LDFLAGS) $(LIBFLAG)
+	$(CXX) $^ -o $@ $(INCLUDE) $(LDFLAGS) $(LIBFLAG)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
-	$(CC) -c $< -o $@ $(CFLAGS) $(INCLUDE) $(LIBFLAG)
+	$(CXX) -c $< -o $@ $(CFLAGS) $(INCLUDE) $(LIBFLAG)
 	
 $(OBJ_DIR):
 	mkdir $@

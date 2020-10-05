@@ -3,8 +3,8 @@
 using namespace std;
 
 Camera::Camera(int pan_pin, int tilt_pin){
-    _pan = ServoM(pan_pin);
-    _tilt = ServoM(tilt_pin);
+    *pan_ = ServoM(pan_pin);
+    *tilt_ = ServoM(tilt_pin);
 }
 
 Camera::~Camera(){
@@ -12,9 +12,9 @@ Camera::~Camera(){
 }
 
 void Camera::setPanTarget(float angle){
-    _pan(angle);
+    pan_->rotate(angle);
 }
 
 void Camera::setTiltTarget(float angle){
-    _tilt(angle);
+    tilt_->rotate(angle);
 }

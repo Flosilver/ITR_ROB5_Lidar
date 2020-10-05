@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <unistd.h>
-#include <iostream.h>
+#include <iostream>
 #include <stdlib.h>
 //#include <time.h>
 //#include <pthread.h>
@@ -15,14 +15,14 @@
 class ServoM
 {
     protected:
-        int _pin;
-        float _angle;
+        int pin_;
+        float angle_;
 
-        float _min;
-        float _max;
+        float min_;
+        float max_;
     
     private:
-        const float& angleToPWM(float angle) const;
+        float angleToPWM(float angle) const;
 
     public:
         ServoM(int nb_pin, float min_duty=3, float max_duty=12);

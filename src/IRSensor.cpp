@@ -3,7 +3,7 @@
 using namespace std;
 
 IRSensor::IRSensor(int nb_pin){
-    _pin = nb_pin;
+    pin_ = nb_pin;
 
     // shit pin gestion: TODO
 }

@@ -3,12 +3,12 @@
 using namespace std;
 
 Lidar::Lidar(int pivot_pin, int sensor_pin){
-    _pivot = ServoM(pivot_pin);
-    _sensor = IRSensor(sensor_pin);
+    *pivot_ = ServoM(pivot_pin);
+    *sensor_ = IRSensor(sensor_pin);
 }
 
 Lidar::~Lidar(){
-    cout << "\tdest Lidar" << endl;
+    cout << "\tdest Lidar\n";
 }
 
 void Lidar::update(){

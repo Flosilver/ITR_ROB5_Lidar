@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <unistd.h>
-#include <iostream.h>
+#include <iostream>
 #include <stdlib.h>
 
 #include <wiringPi.h>
@@ -11,7 +11,7 @@
 class IRSensor
 {
     protected:
-        int _pin;
+        int pin_;
 
     public:
         IRSensor(int nb_pin);

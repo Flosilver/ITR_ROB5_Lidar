@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <unistd.h>
-#include <iostream.h>
+#include <iostream>
 #include <stdlib.h>
 
 #include <wiringPi.h>
@@ -13,8 +13,8 @@
 class Lidar
 {
     protected:
-        ServoM _pivot;
-        IRSensor _sensor;
+        ServoM* pivot_;
+        IRSensor* sensor_;
 
     public:
         Lidar(int pivot_pin, int sensor_pin);
