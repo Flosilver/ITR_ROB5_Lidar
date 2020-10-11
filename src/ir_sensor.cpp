@@ -1,17 +1,21 @@
 #include "ir_sensor.h"
+
 #include <cstring>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
 #include <unistd.h>
+
 #include <wiringPi.h>
+#include <wiringPiI2C.h>
 
 using namespace std;
 
-IRSensor::IRSensor(int addr, int nb_pin) : address_(addr), pin_(nb_pin)
+IRSensor::IRSensor(int addr, int nb_pin) : pin_(nb_pin), address_(addr)
 {
     // TODO: shit pin gestion
     fd_ = wiringPiI2CSetup(address_);
+    // Error handling
     if (fd_ == -1)
     {
         ostringstream err_msg;

@@ -7,7 +7,7 @@ public:
     IRSensor(int addr, int nb_pin);
     ~IRSensor();
 
-    const float& measure() const;
+    double measure() const;
 
 private:
     int pin_; ///< Device's pin

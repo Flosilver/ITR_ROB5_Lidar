@@ -9,8 +9,9 @@
 
 using namespace std;
 
-ServoMotor::ServoMotor(int nb_pin, float min_duty, float max_duty) :
+ServoMotor::ServoMotor(int nb_pin, int min_duty, int max_duty) :
     pin_(nb_pin),
+    angle_(0.0F),
     min_(min_duty),
     delta_(max_duty - min_duty)
 {
@@ -35,15 +36,13 @@ ServoMotor::~ServoMotor()
     // liberation de la pin: TODO
 }
 
-float ServoMotor::angleToPWM(float angle) const {}
-
 float ServoMotor::angle() const { return angle_; }
 
 void ServoMotor::rotate(float angle)
 {
     int duty_cycle = (int)delta_ * angle / 180.0 + min_;
     if (duty_cycle < min_) { duty_cycle = min_; }
-    if (duty_cycle > max_) { duty_cycle = max_; }
+    if (duty_cycle > min_ + delta_) { duty_cycle = min_ + delta_; }
     softPwmWrite(pin_, duty_cycle);
 
     angle_ = (duty_cycle - min_) * 180.0 / delta_;
