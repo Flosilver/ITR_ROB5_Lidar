@@ -8,7 +8,7 @@
 #include <unistd.h>
 
 #include <wiringPi.h>
-#include "ServoM.h"
+#include "servo_motor.h"
 
 class Camera
 {
