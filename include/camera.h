@@ -20,8 +20,8 @@ public:
     void setTiltTarget(float angle);
 
 private:
-    std::unique_ptr<ServoM> pan_;
-    std::unique_ptr<ServoM> tilt_;
+    std::unique_ptr<ServoMotor> pan_;
+    std::unique_ptr<ServoMotor> tilt_;
 };
 
 #endif

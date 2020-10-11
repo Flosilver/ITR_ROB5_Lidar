@@ -4,8 +4,8 @@ using namespace std;
 
 Camera::Camera(int pan_pin, int tilt_pin)
 {
-    pan_ = std::unique_ptr<ServoM>(new ServoM(pan_pin));
-    tilt_ = std::unique_ptr<ServoM>(new ServoM(tilt_pin));
+    pan_ = std::unique_ptr<ServoMotor>(new ServoMotor(pan_pin));
+    tilt_ = std::unique_ptr<ServoMotor>(new ServoMotor(tilt_pin));
 }
 
 Camera::~Camera() { cout << "\tdest Camera" << endl; }
