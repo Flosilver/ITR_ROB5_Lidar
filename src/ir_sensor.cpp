@@ -29,7 +29,7 @@ IRSensor::~IRSensor()
 
 double IRSensor::measure() const
 {
-    int reg = address_ + 0x30;
+    int reg = pin_ + 0x30;
 
     wiringPiI2CWrite(fd_, reg);
     int res = wiringPiI2CReadReg16(fd_, reg);
