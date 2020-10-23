@@ -11,15 +11,15 @@
 
 using namespace std;
 
-IRSensor::IRSensor(int addr, int nb_pin) : pin_(nb_pin), address_(addr)
+IRSensor::IRSensor(int addr, int nb_pin) : pin_(nb_pin), i2c_addr_(addr)
 {
     // TODO: shit pin gestion
-    fd_ = wiringPiI2CSetup(address_);
+    fd_ = wiringPiI2CSetup(i2c_addr_);
     // Error handling
     if (fd_ == -1)
     {
         ostringstream err_msg;
-        err_msg << "wiringPiI2CSetup(" << address_ << ") has failed: " << strerror(errno) << "\n";
+        err_msg << "wiringPiI2CSetup(" << i2c_addr_ << ") has failed: " << strerror(errno) << "\n";
         throw std::runtime_error(err_msg.str());
     }
 }
