@@ -1,4 +1,4 @@
-#include "ir_sensor.h"
+#include "encoder.h"
 #include <asm/io.h>
 #include <asm/uaccess.h>
 #include <linux/cdev.h>
@@ -10,6 +10,7 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/moduleparam.h>
+#include "gpio.h"
 
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("Pilote pour récupération Interruptions sur Raspberry Pi");
@@ -26,11 +27,13 @@ static long encoder_count;
 
 // Déclaration des numéros de pins comme paramètres du module :
 static int irq_pin_1 = IRQ_PIN_1;
-
 module_param(irq_pin_1, int, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
 
+static int irq_pin_2 = IRQ_PIN_2;
+module_param(irq_pin_2, int, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
+
 // Déclaration des structures de données utilisées pour traiter les interruptions :
-static encoder_data_t data_1;
+static encoder_data_t data_1[2];
 
 //-------------------------------------
 // Fonctions gérant les interruptions :
@@ -42,27 +45,36 @@ static irqreturn_t encoder_irq_handler(int irq, void* dev_id)
     // Interprétation du pointeur vers les données de l'interruption :
     encoder_data_t* data = (encoder_data_t*)dev_id;
 
-    // TODO : Incrémentation du codeur.
-    // GET_GPIO( numéro_de_pin ) retourne ( 1 << numéro_du_pin ) si le pin est à 5V, 0 s'il est à 0V.
-    (data->count)++;
-    printk("irq_rcvd count = %ld \n", data->count);
+    data->count++;
+    printk("irq_rcvd count = %ld \n", *data->count);
     return IRQ_HANDLED;
 }
 
 // Fonction pour allouer les pins :
 static void setup_irq_pin(encoder_data_t* data)
 {
+    int i;
     // Initialisations propre à la Raspberry Pi :
-    INP_GPIO(data->irq_pin);
-    SET_GPIO_ALT(data->irq_pin, 0);
+    for (i = 0; i < 2; i++)
+    {
+        INP_GPIO(data->irq_pin[i]);
+        SET_GPIO_ALT(data->irq_pin[i], 0);
 
-    // Allocation de l'interruption :
-    gpio_request_one(data->irq_pin, GPIOF_IN, data->label); // Réservation système en input
+        // Allocation de l'interruption :
+        gpio_request_one(data->irq_pin[i], GPIOF_IN, data->label); // Réservation système en input
 
-    data->irq = gpio_to_irq(data->irq_pin); // Recherche du numéro d'interruptionà partir du numéro de pin
+        data->irq = gpio_to_irq(data->irq_pin[i]); // Recherche du numéro d'interruptionà partir du numéro de pin
 
-    if (request_any_context_irq(data->irq, encoder_irq_handler, IRQF_TRIGGER_RISING, THIS_MODULE->name, data) >= 0)
-        printk(KERN_INFO "%s: interruption \"%s\" allocated on line %u\n", THIS_MODULE->name, data->label, data->irq);
+        if (request_any_context_irq(data->irq[i],
+                                    encoder_irq_handler,
+                                    IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
+                                    THIS_MODULE->name,
+                                    data) >= 0)
+            printk(KERN_INFO "%s: interruption \"%s\" allocated on line %u\n",
+                   THIS_MODULE->name,
+                   data->label[i],
+                   data->irq[i]);
+    }
 }
 
 // Fonction pour libérer les pins :
