@@ -23,8 +23,6 @@ class DCMotor
         int pin_;
         int i2c_addr_;
         int fd_;
-
-        int get_motor_cmd(int speed) const;
         
 };
 
