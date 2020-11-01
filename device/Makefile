@@ -17,3 +17,6 @@ reinstall: uninstall install
 
 info:
 	modinfo encoder.ko
+
+client:
+	gcc -o client client.c
