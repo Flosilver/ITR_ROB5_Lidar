@@ -5,7 +5,7 @@ class ServoMotor
 {
 
 public:
-    ServoMotor(int nb_pin, int min_duty = 3, int max_duty = 12);
+    ServoMotor(int nb_pin, int min_duty = 5, int max_duty = 22);
     ~ServoMotor();
 
     float angle() const;

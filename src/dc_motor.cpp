@@ -28,7 +28,7 @@ DCMotor::~DCMotor(){
     // fermeture du file descriptor
     motor_stop();
     if (fd_ >= 0) close(fd_);
-    cout << "\tdest IR sensor" << endl;
+    cout << "\tdest DC Motor" << endl;
 }
 
 /**
@@ -36,7 +36,7 @@ DCMotor::~DCMotor(){
 **/
 void DCMotor::run_cw(unsigned int speed){
     if (speed > 255) speed = 255;
-    int cmd = (speed << 16) | (pin_ & 0xFF);
+    int cmd = (speed << 8) | (pin_ & 0xFF);
     wiringPiI2CWriteReg16(fd_, CMD_CW, cmd);
 }
 
@@ -45,7 +45,7 @@ void DCMotor::run_cw(unsigned int speed){
 **/
 void DCMotor::run_ccw(unsigned int speed){
     if (speed > 255) speed = 255;
-    int cmd = (speed << 16) | (pin_ & 0xFF);
+    int cmd = (speed << 8) | (pin_ & 0xFF);
     wiringPiI2CWriteReg16(fd_, CMD_CCW, cmd);
 }
 
@@ -62,11 +62,11 @@ void DCMotor::run(int speed){
 }
 
 void DCMotor::motor_break(){
-    int cmd = (0 << 16) | (pin_ & 0xFF);
+    int cmd = (0 << 8) | (pin_ & 0xFF);
     wiringPiI2CWriteReg16(fd_, CMD_BREAK, cmd);
 }
 
 void DCMotor::motor_stop(){
-    int cmd = (0 << 16) | (pin_ & 0xFF);
+    int cmd = (0 << 8) | (pin_ & 0xFF);
     wiringPiI2CWriteReg16(fd_, CMD_STOP, cmd);
 }

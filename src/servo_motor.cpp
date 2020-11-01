@@ -1,11 +1,13 @@
 #include "servo_motor.h"
+
 #include <cmath>
 #include <cstring>
 #include <iostream>
-#include <softPwm.h>
 #include <sstream>
 #include <stdexcept>
+
 #include <wiringPi.h>
+#include <softPwm.h>
 
 using namespace std;
 
@@ -40,7 +42,9 @@ float ServoMotor::angle() const { return angle_; }
 
 void ServoMotor::rotate(float angle)
 {
+    //cout << "méthode rotate\n";
     int duty_cycle = (int)delta_ * angle / 180.0 + min_;
+    //cout << "duty_cycle= " << duty_cycle << "\n";
     if (duty_cycle < min_) { duty_cycle = min_; }
     if (duty_cycle > min_ + delta_) { duty_cycle = min_ + delta_; }
     softPwmWrite(pin_, duty_cycle);
