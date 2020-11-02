@@ -87,7 +87,7 @@ static void setup_irq_pin(encoder_data_t* data)
 
     if (request_any_context_irq(data->irq,
                                 encoder_irq_handler,
-                                IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
+                                IRQF_TRIGGER_RISING,
                                 THIS_MODULE->name,
                                 data) >= 0)
         printk(KERN_INFO "%s: interruption \"%s\" allocated on line %u\n", THIS_MODULE->name, data->label, data->irq);
