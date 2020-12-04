@@ -8,7 +8,7 @@
 #include <unistd.h>
 
 #include <wiringPi.h>
-#include "ServoM.h"
+#include "servo_motor.h"
 
 class Camera
 {
@@ -20,8 +20,8 @@ public:
     void setTiltTarget(float angle);
 
 private:
-    std::unique_ptr<ServoMotor> pan_;
-    std::unique_ptr<ServoMotor> tilt_;
+    ServoMotor pan_;
+    ServoMotor tilt_;
 };
 
 #endif
