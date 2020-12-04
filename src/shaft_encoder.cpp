@@ -3,6 +3,7 @@
 #include <cmath>
 #include <cstring>
 #include <fcntl.h>
+#include <iostream>
 #include <sstream>
 #include <stdexcept>
 #include <stdio.h>
@@ -21,10 +22,8 @@ ShaftEncoder::~ShaftEncoder()
     if (file_desc_ > 0) // Close the device iff it has been open.
         if (close(file_desc_) == -1)
         {
-            std::stringstream msg;
-            msg << "Error in file " << __FILE__ << " at line " << __LINE__
-                << ": Failed to close the device: " << std::strerror(errno) << std::endl;
-            throw std::logic_error(msg.str());
+            std::cerr << "Error in file " << __FILE__ << " at line " << __LINE__
+                      << ": Failed to close the device: " << std::strerror(errno) << std::endl;
         }
 }
 
