@@ -5,6 +5,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <unistd.h>
+#include <math.h>
 
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
@@ -31,9 +32,9 @@ IRSensor::~IRSensor()
     cout << "\tdest IR sensor" << endl;
 }
 
-double IRSensor::measure() const
+float IRSensor::measure() const
 {
-    int reg = pin_ + 0x30;
+    int reg = pin_ + 0x20;
 
     wiringPiI2CWrite(fd_, reg);
     int res = wiringPiI2CReadReg16(fd_, reg);
@@ -45,5 +46,12 @@ double IRSensor::measure() const
         throw runtime_error(err_msg.str());
     }
 
-    return ((double)res) / 10.;
+    return meas_to_dist(((float)res) / 1000.);
+}
+
+float IRSensor::meas_to_dist(const float mes) const{
+    if (mes < 0.35) return 80.;
+    if (mes > 2.288) return 9.;
+
+    return 23.5 * pow(mes,-1.15);
 }
