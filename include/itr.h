@@ -8,5 +8,6 @@
 #include "ir_sensor.h"
 #include "lidar.h"
 #include "servo_motor.h"
+#include "shaft_encoder.h"
 
 #endif

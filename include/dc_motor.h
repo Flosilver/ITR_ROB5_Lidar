@@ -11,7 +11,7 @@ class DCMotor
 {
     public:
         DCMotor(int pin, int i2c_addr);
-        ~DCMotor();
+        virtual ~DCMotor();
 
         void run_cw(unsigned int speed);
         void run_ccw(unsigned int speed);
