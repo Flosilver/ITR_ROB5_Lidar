@@ -40,7 +40,7 @@ long ShaftEncoder::measureIncrements() const
         msg << "Error in file " << __FILE__ << " at line " << __LINE__ << ": Invalid read size." << std::endl;
         throw std::logic_error(msg.str());
     }
-    return data.value; // Convert the bytes to a long
+    return data.value - offset_; // Convert the bytes to a long
 }
 
 float ShaftEncoder::measurePosition() const { return measureIncrements() * 2.0 * M_PI / cpr_; }
