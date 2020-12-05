@@ -46,10 +46,10 @@ float IRSensor::measure() const
         throw runtime_error(err_msg.str());
     }
 
-    return meas_to_dist(((float)res) / 1000.);
+    return measToDist(((float)res) / 1000.);
 }
 
-float IRSensor::meas_to_dist(const float mes) const{
+float IRSensor::measToDist(const float mes) const{
     if (mes < 0.35) return 80.;
     if (mes > 2.288) return 9.;
 

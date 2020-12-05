@@ -20,7 +20,7 @@ class MotorCtrl : public DCMotor
     float desired_orientation_; ///< The desired shat orientation (in radians).
     const float kp_; ///< The proportional gain of the PI corrector.
     const float ki_; ///< The integral gain of the PI corrector.
-    float err_int_; ///< The integrated error (in radians.seconds).
+    float error_int_; ///< The integrated error (in radians.seconds).
     float anti_windup_; ///< The threshold at which to freeze the integral.
 
 public:
@@ -33,7 +33,12 @@ public:
      * @param kp The proportional gain of the PI corrector.
      * @param ki The integral gain of the PI corrector.
      */
-    MotorCtrl(int pin, int i2c_addr, std::shared_ptr<ShaftEncoder> encoder, float kp = 1, float ki = 1);
+    MotorCtrl(int pin,
+              int i2c_addr,
+              std::shared_ptr<ShaftEncoder> encoder,
+              float kp = 200.0,
+              float ki = 2,
+              float anti_windup = 50.0);
 
     /**
      * Destroy the motor controller.
