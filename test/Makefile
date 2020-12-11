@@ -12,3 +12,9 @@ shaft_encoder_test: shaft_encoder_test.cpp ../src/shaft_encoder.cpp
 
 motor_ctrl_test: motor_ctrl_test.cpp ../src/motor_ctrl.cpp ../src/shaft_encoder.cpp ../src/dc_motor.cpp
 	$(CXX) $^ -o $@ $(INCLUDE) $(CXXFLAGS) $(LDFLAGS) $(LIBFLAG)
+
+lidar_test: lidar_test.cpp ../src/lidar.cpp ../src/motor_ctrl.cpp ../src/shaft_encoder.cpp ../src/dc_motor.cpp ../src/ir_sensor.cpp
+	$(CXX) $^ -o $@ $(INCLUDE) $(CXXFLAGS) $(LDFLAGS) $(LIBFLAG)
+
+clear:
+	rm shaft_encoder_test motor_ctrl_test lidar_test

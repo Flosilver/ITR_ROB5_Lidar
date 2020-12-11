@@ -50,8 +50,8 @@ float IRSensor::measure() const
 }
 
 float IRSensor::measToDist(const float mes) const{
-    if (mes < 0.35) return 80.;
-    if (mes > 2.288) return 9.;
+    if (mes < 0.35) return 0.80;
+    if (mes > 2.288) return 0.09;
 
-    return 23.5 * pow(mes,-1.15);
+    return 0.235 * pow(mes,-1.15);
 }

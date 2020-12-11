@@ -51,7 +51,7 @@ void DCMotor::run_ccw(unsigned int speed){
 
 void DCMotor::run(int speed){
     if (speed > 255) speed = 255;
-    if (speed < -255) speed = -255;
+    else if (speed < -255) speed = -255;
 
     if (speed >= 0){
         run_cw(speed);

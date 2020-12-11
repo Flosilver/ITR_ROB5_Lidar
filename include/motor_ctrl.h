@@ -61,6 +61,8 @@ public:
      */
     void rotateAsync(float orientation);
 
+    std::shared_ptr<ShaftEncoder> encoder(){return encoder_;}
+
 private:
     /**
      * Compute and send a velocity command to the motor.
