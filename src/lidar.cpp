@@ -1,46 +1,68 @@
 #include "lidar.h"
-#include <iostream>
-#include <chrono>
 #include <cassert>
+#include <chrono>
+#include <cmath>
 
 using namespace std;
 
-Lidar::Lidar(std::shared_ptr<MotorCtrl> pivot, std::shared_ptr<IRSensor> sensor, float l_edge, float r_edge):
+Lidar::Lidar(std::shared_ptr<MotorCtrl> pivot, std::shared_ptr<IRSensor> sensor, float max_angle, float min_angle) :
     pivot_(pivot),
     sensor_(sensor),
-    left_edge_(l_edge),
-    right_edge_(r_edge)
+    min_angle_(normalize(min_angle)),
+    max_angle_(normalize(max_angle)),
+    angle_increment_(0.1),
+    motor_sleep_(200)
 {
     assert(pivot != nullptr);
     assert(sensor != nullptr);
+    // Ensure the min is inferior to the max
+    if (max_angle_ < min_angle_)
+    {
+        float tmp(min_angle_);
+        min_angle_ = max_angle_;
+        max_angle_ = tmp;
+    }
 }
 
-Lidar::~Lidar() {
-    // Stop the motor
-    pivot_->motor_stop();
+void Lidar::minAngle(float angle)
+{
+    min_angle_ = normalize(angle);
+    assert(min_angle_ < max_angle_);
 }
 
-std::vector<Lidar::Measure> Lidar::update(float increment, int sleep)
+void Lidar::maxAngle(float angle)
+{
+    max_angle_ = normalize(angle);
+    assert(min_angle_ < max_angle_);
+}
+
+std::vector<Lidar::Measure> Lidar::scan()
 {
     std::vector<Lidar::Measure> list;
-    auto period_duration = std::chrono::milliseconds(sleep);
-
     std::shared_ptr<ShaftEncoder> encoder = pivot_->encoder();
 
-    std::cout << "brones: " << right_edge_ << ", " << left_edge_ << "\n";
-
-    for (float i=right_edge_ ; i<=left_edge_ ; i+=increment)
+    for (float angle = min_angle_; angle <= max_angle_; angle += angle_increment_)
     {
-        pivot_->rotateAsync(i);
-        std::this_thread::sleep_for(period_duration);
-        std::cout <<"sleep " << i << "\n";
-        Lidar::Measure mes;
-        mes.pos = encoder->measurePosition();
-        mes.meas = sensor_->measure();
-
-        list.push_back(mes);
+        // Rotate the sensor
+        pivot_->rotateAsync(angle);
+        std::this_thread::sleep_for(motor_sleep_);
+        // Measure the distance to an obstacle and store the measurement
+        Lidar::Measure measure{.orientation = encoder->measurePosition(), .distance = sensor_->measure()};
+        list.push_back(measure);
     }
-    pivot_->rotateAsync(right_edge_);
-    std::this_thread::sleep_for(period_duration);
+    // Rotate back to the starting angle
+    pivot_->rotateAsync(min_angle_);
+    std::this_thread::sleep_for(motor_sleep_);
+
     return list;
+}
+
+float Lidar::normalize(float angle)
+{
+    float normalized_angle(angle);
+    while (normalized_angle < -M_PI)
+        normalized_angle += 2 * M_PI;
+    while (normalized_angle >= M_PI)
+        normalized_angle -= 2 * M_PI;
+    return normalized_angle;
 }
