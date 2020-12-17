@@ -12,7 +12,7 @@ int main(void)
     std::cout << "Press Enter to continue...";
     std::cin.get();
 
-    motor.rotateAsync(0.25);
+    motor.rotateAsync(0.6);
 
     std::cout << "Press Enter to continue...";
     std::cin.get();

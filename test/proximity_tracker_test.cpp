@@ -1,9 +1,13 @@
 #include <iostream>
 #include <memory>
 #include "proximity_tracker.h"
+#include <wiringPi.h>
 
 int main(void)
 {
+    wiringPiSetup(); // setup the library
+    std::cout << "wiring PI seted up\n";
+
     std::shared_ptr<ShaftEncoder> encoder(new ShaftEncoder("/tmp/encoder", 420));
     encoder->setOffset(encoder->measureIncrements());
 
@@ -13,7 +17,7 @@ int main(void)
 
     std::shared_ptr<Lidar> lidar(new Lidar(motor, sensor));
 
-    std::shared_ptr<ServoMotor> designator(new ServoMotor(17));
+    std::shared_ptr<ServoMotor> designator(new ServoMotor(6));
 
     ProximityTracker tracker(lidar, designator);
 

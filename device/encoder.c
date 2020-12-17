@@ -69,7 +69,7 @@ static irqreturn_t encoder_irq_handler(int irq, void* dev_id)
         (*data->count)--;
     else // Counter clockwise rotation
         (*data->count)++;
-    printk("count: %ld, pin2: %d\n", *data->count, pin2);
+    //printk("count: %ld, pin2: %d\n", *data->count, pin2);
     return IRQ_HANDLED;
 }
 
@@ -108,6 +108,7 @@ static void free_encoder_pins(encoder_data_t* data)
 int init_module(void)
 {
     void* gpio_map;
+    int i;
     // Register the driver
     Major = register_chrdev(Major, "encoder", &encoder_fops);
     if (Major < 0)
@@ -140,6 +141,7 @@ int init_module(void)
     setup_irq_pin(&data_1);
     // enable pull-up on GPIO24&25
     GPIO_PULL = 2;
+    for( i=0 ; i<150 ;i++);
     // clock on GPIO 22 & 23 (bit 24 & 25 set)
     GPIO_PULLCLK0 = (1 << IRQ_PIN_1) | (1 << IRQ_PIN_2);
     /****** Automatically creating virtual files in /dev ******/
@@ -197,7 +199,7 @@ static ssize_t encoder_read(struct file* file, char* buf, size_t count, loff_t* 
     if (count < 4) { return 0; }
     converter.count = encoder_count;
     result = copy_to_user(buf, converter.count_byte, 4);
-    printk(KERN_INFO "Copied : %ld, count: %ld", converter.count, encoder_count);
+    //printk(KERN_INFO "Copied : %ld, count: %ld", converter.count, encoder_count);
     if (result < 0)
     {
         printk(KERN_ALERT "Failed to copy to user");

@@ -3,19 +3,27 @@
 
 #include <chrono>
 #include <memory>
-#include <vector>
+#include <list>
+#include <thread>
+#include <mutex>
 
 #include "ir_sensor.h"
-#include "motor_ctrl.h"
+#include "dc_motor.h"
+#include "shaft_encoder.h"
 
 class Lidar
 {
-    const std::shared_ptr<MotorCtrl> pivot_; ///< The pivot that the IR sensor is attached to.
+    const std::shared_ptr<DCMotor> pivot_; ///< The pivot that the IR sensor is attached to.
+    const std::shared_ptr<ShaftEncoder> encoder_; ///< The encoder
     const std::shared_ptr<IRSensor> sensor_; ///< The IR sensor measuring the distance.
     float min_angle_; ///< The start angle of a measurement (in radians).
     float max_angle_; ///< The end angle of a measurement (in radians).
     float angle_increment_; ///< The increment of the angle between 2 measurements during a scan (in radians).
-    std::chrono::microseconds motor_sleep_; ///< The time to sleep after a desired angle is given to the motor.
+    std::chrono::milliseconds motor_sleep_; ///< The time to sleep after a desired angle is given to the motor.
+    
+    bool is_meas_;
+    std::mutex meas_mtx_;
+    std::thread meas_thread_;
 
 public:
     /**
@@ -38,21 +46,27 @@ public:
      * @param min_angle The start angle of a measurement (in radians).
      * @param max_angle The end angle of a measurement (in radians).
      */
-    Lidar(std::shared_ptr<MotorCtrl> pivot,
+    Lidar(std::shared_ptr<DCMotor> pivot,
+          std::shared_ptr<ShaftEncoder> encoder,
           std::shared_ptr<IRSensor> sensor,
           float min_angle = -1.0,
           float max_angle = 1.0);
+    
+    ~Lidar();
 
     /**
      * Get the pivot that the IR sensor is attached to.
      *
      * @return the pivot that the IR sensor is attached to.
      */
-    std::shared_ptr<const MotorCtrl> pivot() const { return pivot_; }
+    std::shared_ptr<const DCMotor> pivot() const { return pivot_; }
     /**
      * @overload pivot()
      */
-    std::shared_ptr<MotorCtrl> pivot() { return pivot_; }
+    std::shared_ptr<DCMotor> pivot() { return pivot_; }
+
+    std::shared_ptr<const ShaftEncoder> encoder() const { return encoder_; }
+    std::shared_ptr<ShaftEncoder> encoder() { return encoder_; }
 
     /**
      * Get the IR sensor measuring the distance.
@@ -96,13 +110,13 @@ public:
      *
      * @return the time to sleep after a desired angle is given to the motor.
      */
-    std::chrono::microseconds motorSleepDuration() const { return motor_sleep_; }
+    std::chrono::milliseconds motorSleepDuration() const { return motor_sleep_; }
     /**
      * Set the time to sleep after a desired angle is given to the motor.
      *
      * @param duration the time to sleep after a desired angle is given to the motor.
      */
-    void motorSleepDuration(const std::chrono::microseconds& duration) { motor_sleep_ = duration; }
+    void motorSleepDuration(const std::chrono::milliseconds& duration) { motor_sleep_ = duration; }
 
     struct Measure
     {
@@ -115,7 +129,14 @@ public:
      *
      * @return An array of measurements associating the angle (in radians) and the distance (in meters).
      */
-    std::vector<Measure> scan();
+    std::list<Measure> scan();
+
+    void start();
+    void stop();
+    void measureTask();
+
+    private:
+        std::list<Measure> scan_; ///< zlhgouzhgohgjohrug
 };
 
 #endif

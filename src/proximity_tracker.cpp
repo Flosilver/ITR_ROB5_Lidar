@@ -17,6 +17,7 @@ ProximityTracker::~ProximityTracker() { stop(); }
 
 void ProximityTracker::start()
 {
+    std::lock_guard<std::mutex> tracker_lock(tracker_mutex_);
     if (!is_running_)
     {
         is_running_ = true;
@@ -50,8 +51,10 @@ void ProximityTracker::track()
         for (Lidar::Measure& measure : ir_scan)
             if (measure.distance < min_measure.distance) min_measure = measure;
         if (min_measure.distance < 0.6) designator_->rotate(min_measure.orientation);
-
-        std::lock_guard<std::mutex> tracker_lock(tracker_mutex_);
-        keep_running = is_running_;
+        
+        {
+            std::lock_guard<std::mutex> tracker_lock(tracker_mutex_);
+            keep_running = is_running_;
+        }
     }
 }

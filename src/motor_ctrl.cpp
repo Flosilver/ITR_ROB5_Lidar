@@ -49,12 +49,13 @@ void MotorCtrl::control()
 {
     float dt = sp_ * 1e-6;
     auto period_duration = std::chrono::microseconds(sp_);
+    float des;
     while (is_controlled_)
     {
         // Copy the disered orientation
-        float des;
         {
             std::lock_guard<std::mutex> ctrl_lock(ctrl_mtx_);
+            if (des != desired_orientation_) error_int_ = 0;
             des = desired_orientation_;
         }
         // Compute the PI corrector
