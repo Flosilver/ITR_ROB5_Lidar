@@ -1,19 +1,19 @@
 #include "proximity_tracker.h"
 #include <cassert>
-#include <functional>
-#include <list>
-#include <iostream>
 #include <chrono>
+#include <functional>
+#include <iostream>
+#include <list>
 
-ProximityTracker::ProximityTracker(std::shared_ptr<Lidar> lidar, std::shared_ptr<ServoMotor> designator) :
+ProximityTracker::ProximityTracker(std::shared_ptr<Lidar> lidar, std::shared_ptr<CameraPanTilt> designator) :
     is_running_(false),
     tracker_thread_(),
     tracker_mutex_(),
     lidar_(lidar),
-    designator_(designator)
+    camera_(designator)
 {
     assert(lidar_ != nullptr);
-    assert(designator_ != nullptr);
+    assert(camera_ != nullptr);
 }
 
 ProximityTracker::~ProximityTracker() { stop(); }
@@ -49,6 +49,7 @@ void ProximityTracker::track()
     std::chrono::milliseconds track_sleep(1000);
 
     lidar_->start();
+    camera_->display();
 
     while (keep_running)
     {
@@ -57,11 +58,10 @@ void ProximityTracker::track()
         std::cout << "--------------\n";
         for (Lidar::Measure& measure : ir_scan)
         {
-            //std::cout << "[" << measure.orientation << ": " << measure.distance << "] ";
             if (measure.distance < min_measure.distance) min_measure = measure;
         }
         std::cout << "[" << min_measure.orientation << ": " << min_measure.distance << "]\n";
-        if (min_measure.distance < 0.6) designator_->rotate(min_measure.orientation);
+        if (min_measure.distance < 0.6) camera_->rotatePan(min_measure.orientation);
         {
             std::lock_guard<std::mutex> tracker_lock(tracker_mutex_);
             keep_running = is_running_;

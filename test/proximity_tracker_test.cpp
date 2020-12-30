@@ -1,7 +1,7 @@
+#include <atomic>
 #include <iostream>
 #include <memory>
 #include <wiringPi.h>
-#include <atomic>
 #include "proximity_tracker.h"
 
 int main(void)
@@ -18,9 +18,9 @@ int main(void)
 
     std::shared_ptr<Lidar> lidar(new Lidar(motor, encoder, sensor, -0.4, 0.4));
 
-    std::shared_ptr<ServoMotor> designator(new ServoMotor(22, 5, 21));
+    std::shared_ptr<CameraPanTilt> camera(new CameraPanTilt(0, 22, 0));
 
-    ProximityTracker tracker(lidar, designator);
+    ProximityTracker tracker(lidar, camera);
 
     std::cout << "Starting the tracker..." << std::endl;
     tracker.start();

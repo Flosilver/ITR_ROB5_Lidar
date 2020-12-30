@@ -5,7 +5,7 @@
 #include <mutex>
 #include <thread>
 #include "lidar.h"
-#include "servo_motor.h"
+#include "camera_pan_tilt.h"
 
 class ProximityTracker
 {
@@ -13,18 +13,18 @@ class ProximityTracker
     std::thread tracker_thread_;
     std::mutex tracker_mutex_;
     std::shared_ptr<Lidar> lidar_;
-    std::shared_ptr<ServoMotor> designator_;
+    std::shared_ptr<CameraPanTilt> camera_;
 
 public:
     ProximityTracker() = default;
-    ProximityTracker(std::shared_ptr<Lidar> lidar, std::shared_ptr<ServoMotor> designator);
+    ProximityTracker(std::shared_ptr<Lidar> lidar, std::shared_ptr<CameraPanTilt> designator);
     ~ProximityTracker();
 
     std::shared_ptr<const Lidar> lidar() const { return lidar_; }
     std::shared_ptr<Lidar> lidar() { return lidar_; }
 
-    std::shared_ptr<const ServoMotor> designator() const { return designator_; }
-    std::shared_ptr<ServoMotor> designator() { return designator_; }
+    std::shared_ptr<const CameraPanTilt> designator() const { return camera_; }
+    std::shared_ptr<CameraPanTilt> designator() { return camera_; }
 
     bool isRunning() const { return is_running_; }
 
