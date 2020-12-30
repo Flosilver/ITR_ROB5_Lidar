@@ -7,7 +7,7 @@ int main(int argc, char const* argv[])
 {
     wiringPiSetup(); // setup the library
 
-    ServoMotor sm(22, 5, 20);
+    ServoMotor sm(22, 5, 21);
 
     std::cout << "Rotate to origin (0 rad)" << std::endl;
     sm.rotate(0);
