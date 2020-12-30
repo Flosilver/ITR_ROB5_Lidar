@@ -13,6 +13,14 @@
 
 class Lidar
 {
+public:
+    struct Measure
+    {
+        float orientation; ///< Angular position of the measure (in radians).
+        float distance; ///< Distance measured between the lidar and the measure (in meters).
+    };
+
+private:
     const std::shared_ptr<DCMotor> pivot_; ///< The pivot that the IR sensor is attached to.
     const std::shared_ptr<ShaftEncoder> encoder_; ///< The encoder
     const std::shared_ptr<IRSensor> sensor_; ///< The IR sensor measuring the distance.
@@ -24,6 +32,7 @@ class Lidar
     bool is_meas_;
     std::mutex meas_mtx_;
     std::thread meas_thread_;
+    std::list<Measure> scan_; ///< zlhgouzhgohgjohrug
 
 public:
     /**
@@ -118,12 +127,6 @@ public:
      */
     void motorSleepDuration(const std::chrono::milliseconds& duration) { motor_sleep_ = duration; }
 
-    struct Measure
-    {
-        float orientation; ///< Angular position of the measure (in radians).
-        float distance; ///< Distance measured between the lidar and the measure (in meters).
-    };
-
     /**
      * Measure the distance to any obstacle.
      *
@@ -134,9 +137,6 @@ public:
     void start();
     void stop();
     void measureTask();
-
-    private:
-        std::list<Measure> scan_; ///< zlhgouzhgohgjohrug
 };
 
 #endif

@@ -43,11 +43,11 @@ float ServoMotor::angle() const { return angle_; }
 void ServoMotor::rotate(float angle)
 {
     //cout << "méthode rotate\n";
-    int duty_cycle = (int)delta_ * angle / 180.0 + min_;
-    //cout << "duty_cycle= " << duty_cycle << "\n";
+    int duty_cycle = (int)(delta_ * (angle / M_PI + 0.5) + min_);
+    cout << "duty_cycle= " << duty_cycle << "\n";
     if (duty_cycle < min_) { duty_cycle = min_; }
     if (duty_cycle > min_ + delta_) { duty_cycle = min_ + delta_; }
     softPwmWrite(pin_, duty_cycle);
 
-    angle_ = (duty_cycle - min_) * 180.0 / delta_;
+    angle_ = ((duty_cycle - min_) / delta_ - 0.5) * M_PI ;
 }

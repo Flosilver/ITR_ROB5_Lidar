@@ -77,14 +77,14 @@ void Lidar::measureTask()
     bool do_mes(false);
     float pos;
     float old_pos = 1e10;
-    int speed = 80;
+    int speed = 100;
     int max_speed = speed;
     std::list<Lidar::Measure> mes_tab;
 
     while(keep_meas){
         pivot_->run(speed);
         pos = encoder_->measurePosition();
-        std::cout << pos << "\n";
+        //std::cout << pos << "\n";
 
         if (pos < min_angle_){
             speed = max_speed;
@@ -102,7 +102,7 @@ void Lidar::measureTask()
         }
         if (do_mes && std::abs(old_pos - pos) > angle_increment_)
         {
-            std::cout << "dedans :X\n";
+            //std::cout << "on fait une mesure\n";
             old_pos = pos;
             Lidar::Measure measure{.orientation = encoder_->measurePosition(), .distance = sensor_->measure()};
             mes_tab.push_back(measure);
