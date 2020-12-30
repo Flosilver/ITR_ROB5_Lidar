@@ -19,5 +19,8 @@ lidar_test: lidar_test.cpp ../src/lidar.cpp ../src/motor_ctrl.cpp ../src/shaft_e
 proximity_tracker_test: proximity_tracker_test.cpp  ../src/proximity_tracker.cpp ../src/lidar.cpp ../src/motor_ctrl.cpp ../src/shaft_encoder.cpp ../src/dc_motor.cpp ../src/ir_sensor.cpp ../src/servo_motor.cpp
 	$(CXX) $^ -o $@ $(INCLUDE) $(CXXFLAGS) $(LDFLAGS) $(LIBFLAG)
 
+servo_test: servo_motor_test.cpp ../src/servo_motor.cpp
+	$(CXX) $^ -o $@ $(INCLUDE) $(CXXFLAGS) $(LDFLAGS) $(LIBFLAG)
+
 clear:
 	rm shaft_encoder_test motor_ctrl_test lidar_test proximity_tracker_test
