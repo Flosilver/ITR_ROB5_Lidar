@@ -1,8 +1,8 @@
 CXX := g++
-CXXFLAGS := -g -Wall -std=c++11
+CXXFLAGS := `pkg-config --cflags opencv` -g -Wall -std=c++11
 INCLUDE := -I../include -I/usr/local/include
 LDFLAGS := -L/usr/local/lib
-LIBFLAG := -lwiringPi -lpthread
+LIBFLAG := -lwiringPi -lpthread `pkg-config --libs opencv`
 
 encoder_file:
 	sudo mknod -m 666 /tmp/encoder c 239 0
@@ -20,6 +20,8 @@ proximity_tracker_test: proximity_tracker_test.cpp  ../src/proximity_tracker.cpp
 	$(CXX) $^ -o $@ $(INCLUDE) $(CXXFLAGS) $(LDFLAGS) $(LIBFLAG)
 
 servo_test: servo_motor_test.cpp ../src/servo_motor.cpp
+	$(CXX) $^ -o $@ $(INCLUDE) $(CXXFLAGS) $(LDFLAGS) $(LIBFLAG)
+camera_test: camera_test.cpp ../src/servo_motor.cpp ../src/camera_pan_tilt.cpp
 	$(CXX) $^ -o $@ $(INCLUDE) $(CXXFLAGS) $(LDFLAGS) $(LIBFLAG)
 
 clear:

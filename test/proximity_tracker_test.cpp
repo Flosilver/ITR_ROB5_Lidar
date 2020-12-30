@@ -1,6 +1,7 @@
 #include <iostream>
 #include <memory>
 #include <wiringPi.h>
+#include <atomic>
 #include "proximity_tracker.h"
 
 int main(void)
