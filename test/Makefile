@@ -21,7 +21,11 @@ proximity_tracker_test: proximity_tracker_test.cpp  ../src/proximity_tracker.cpp
 
 servo_test: servo_motor_test.cpp ../src/servo_motor.cpp
 	$(CXX) $^ -o $@ $(INCLUDE) $(CXXFLAGS) $(LDFLAGS) $(LIBFLAG)
+
 camera_test: camera_test.cpp ../src/servo_motor.cpp ../src/camera_pan_tilt.cpp
+	$(CXX) $^ -o $@ $(INCLUDE) $(CXXFLAGS) $(LDFLAGS) $(LIBFLAG)
+
+referee_test: referee_test.cpp ../src/servo_motor.cpp ../src/camera_pan_tilt.cpp ../src/referee.cpp
 	$(CXX) $^ -o $@ $(INCLUDE) $(CXXFLAGS) $(LDFLAGS) $(LIBFLAG)
 
 clear:

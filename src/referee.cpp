@@ -4,12 +4,13 @@
 #define WIN_1 "Treatment player 0"
 #define WIN_2 "Treatment player 1"
 
-Referee::Referee(int capture_id, int pan_pin, int tilt_pin, float p_angle, double threshold) :
+Referee::Referee(int capture_id, int pan_pin, int tilt_pin, float p_angle, double threshold, size_t lose_thres) :
     CameraPanTilt(capture_id, pan_pin, tilt_pin),
     player_angle_(p_angle),
     target_(-1),
     lost_(-1),
-    diff_threshold_(threshold)
+    diff_threshold_(threshold),
+    lose_thres_(lose_thres)
 {
     cv::namedWindow(WIN_1, CV_WINDOW_AUTOSIZE);
     cv::namedWindow(WIN_2, CV_WINDOW_AUTOSIZE);
@@ -50,11 +51,8 @@ void Referee::goToTarget(int t)
 
 void Referee::treatment(const cv::Mat& frame)
 {
-    if (target_ == -1)
-    {
-        return;
-    }
-    
+    if (target_ == -1) { return; }
+
     cv::Mat treatment_frame;
     {
         std::lock_guard<std::mutex> tracker_lock(treatment_mtx_);
@@ -70,14 +68,21 @@ void Referee::treatment(const cv::Mat& frame)
 
     // treatment: subtraction + binarize
     cv::Mat diff = targets_frame_[target_] - treatment_frame;
-    diff = cv::threshold(diff, diff, diff_threshold_, 255, CV_THRESH_BINARY);
-    
+    cv::threshold(diff, diff, diff_threshold_, 255, CV_THRESH_BINARY);
+
     // test phase
     if (target_ == 0) cv::imshow(WIN_1, diff);
     if (target_ == 1) cv::imshow(WIN_2, diff);
 
-    // winner definition
-    // TODO
+    // loser detection
+    size_t diff_px_nb(0);
+    for (size_t i = 0; i < diff.rows; ++i)
+        for (size_t j = 0; j < diff.cols; ++j)
+        {
+            int px_value = diff.at<int>(i, j);
+            if (px_value == 255) ++diff_px_nb;
+        }
+    if (lose_thres_ < diff_px_nb) lost_.store(target_);
 
     // MAJ target_frame
     targets_frame_[target_] = treatment_frame.clone();

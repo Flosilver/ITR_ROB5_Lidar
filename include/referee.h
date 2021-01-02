@@ -15,9 +15,10 @@ class Referee : public CameraPanTilt
     std::atomic<int> lost_;
     std::mutex treatment_mtx_;
     double diff_threshold_;
+    size_t lose_thres_;
 
 public:
-    Referee(int capture_id, int pan_pin, int tilt_pin, float p_angle, double threshold);
+    Referee(int capture_id, int pan_pin, int tilt_pin, float p_angle, double threshold, size_t lose_thres);
     ~Referee();
 
     void goToTarget(int t);
