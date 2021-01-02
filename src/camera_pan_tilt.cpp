@@ -47,6 +47,7 @@ void CameraPanTilt::displayTask()
             {
                 cv::rotate(raw_frame, frame_, cv::ROTATE_180);
                 cv::imshow("Camera", frame_);
+                treatment(frame_);
             }
             is_open = cv::waitKey(33) != 27;
         }

@@ -38,6 +38,7 @@ public:
 
 private:
     void displayTask();
+    virtual void treatment(const cv::Mat& frame) {}
 };
 
 #endif // __CAMERA_PAN_TILT_H__
