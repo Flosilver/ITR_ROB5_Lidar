@@ -1,14 +1,15 @@
 #ifndef __LIDAR_H__
 #define __LIDAR_H__
 
+#include <atomic>
 #include <chrono>
-#include <memory>
 #include <list>
-#include <thread>
+#include <memory>
 #include <mutex>
+#include <thread>
 
-#include "ir_sensor.h"
 #include "dc_motor.h"
+#include "ir_sensor.h"
 #include "shaft_encoder.h"
 
 class Lidar
@@ -28,11 +29,13 @@ private:
     float max_angle_; ///< The end angle of a measurement (in radians).
     float angle_increment_; ///< The increment of the angle between 2 measurements during a scan (in radians).
     std::chrono::milliseconds motor_sleep_; ///< The time to sleep after a desired angle is given to the motor.
-    
-    bool is_meas_;
-    std::mutex meas_mtx_;
-    std::thread meas_thread_;
-    std::list<Measure> scan_; ///< zlhgouzhgohgjohrug
+    std::chrono::milliseconds motor_stuck_; ///< The duration threshold to consider the motor to be stuck.
+    std::chrono::milliseconds unstuck_cooldown_; ///< The cool down before trying to unstuck the motor.
+    std::atomic<bool> is_measuring_; ///< The flag controlling the infinite loop in the thread.
+    std::mutex meas_mtx_; ///< The mutex used to synchronize operations around the measurements.
+    std::thread meas_thread_; ///< The thread that performs the measurements.
+    std::list<Measure> scan_; ///< The last measurements from the thread.
+    const int motor_speed_; ///< The motor rotating speed.
 
 public:
     /**
@@ -59,8 +62,9 @@ public:
           std::shared_ptr<ShaftEncoder> encoder,
           std::shared_ptr<IRSensor> sensor,
           float min_angle = -1.0,
-          float max_angle = 1.0);
-    
+          float max_angle = 1.0,
+          int motor_speed = 100);
+
     ~Lidar();
 
     /**
