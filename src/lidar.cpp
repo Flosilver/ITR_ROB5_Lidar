@@ -100,9 +100,9 @@ void Lidar::measureTask()
             last_move = now;
             last_step = step;
         }
-        bool is_stuck(motor_stuck_ < std::chrono::duration_cast<std::chrono::microseconds>(now - last_move));
+        bool is_stuck(motor_stuck_ < std::chrono::duration_cast<std::chrono::milliseconds>(now - last_move));
         bool has_cooled_down(unstuck_cooldown_ <
-                             std::chrono::duration_cast<std::chrono::microseconds>(now - last_change));
+                             std::chrono::duration_cast<std::chrono::milliseconds>(now - last_change));
         // Manage the rotation
         if (pos < min_angle_ || (is_stuck && has_cooled_down && speed < 0))
         {

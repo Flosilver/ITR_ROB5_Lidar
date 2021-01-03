@@ -7,7 +7,8 @@ int main()
     wiringPiSetup(); // setup the library
     std::cout << "wiring PI seted up\n";
 
-    Referee ref(0, 22, 0, 0.5, 25.);
+    Referee ref(0, 22, 0, 0.5, 25., 3000);
+    //ref.rotateTilt(-0.5);
 
     std::cout << "Starting the referee..." << std::endl;
     ref.display();
@@ -25,6 +26,6 @@ int main()
 
     std::cout << "Press Enter to exit...\n";
     std::cin.get();
-    std::cout << ref.has_lost() << std::endl;
+    std::cout << "perdant: " << ref.has_lost() << std::endl;
     return 0;
 }

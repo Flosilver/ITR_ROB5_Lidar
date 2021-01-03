@@ -9,12 +9,17 @@ Referee::Referee(int capture_id, int pan_pin, int tilt_pin, float p_angle, doubl
     player_angle_(p_angle),
     target_(-1),
     lost_(-1),
+    do_treatment_(true),
     diff_threshold_(threshold),
-    lose_thres_(lose_thres)
+    lose_thres_(lose_thres),
+    treatment_cooldown_(500)
 {
-    cv::namedWindow(WIN_1, CV_WINDOW_AUTOSIZE);
-    cv::namedWindow(WIN_2, CV_WINDOW_AUTOSIZE);
+    //cv::namedWindow(WIN_1, CV_WINDOW_AUTOSIZE);
+    //cv::namedWindow(WIN_2, CV_WINDOW_AUTOSIZE);
     rotatePan(0);
+    //rotateTilt(0);
+    auto now(std::chrono::system_clock::now());
+    last_treatment = now;
 }
 
 Referee::~Referee()
@@ -27,18 +32,20 @@ Referee::~Referee()
 
 void Referee::goToTarget(int t)
 {
-    std::lock_guard<std::mutex> tracker_lock(treatment_mtx_);
-    std::chrono::milliseconds delay(1000);
+    do_treatment_.store(false);
+    std::chrono::milliseconds delay(1200);
     switch (t)
     {
     case target::R_TARGET:
         target_ = target::R_TARGET;
         rotatePan(-player_angle_);
+        targets_frame_[target_] = cv::Mat();
         break;
 
     case target::L_TARGET:
         target_ = target::L_TARGET;
         rotatePan(player_angle_);
+        targets_frame_[target_] = cv::Mat();
         break;
 
     default:
@@ -47,17 +54,19 @@ void Referee::goToTarget(int t)
         break;
     }
     std::this_thread::sleep_for(delay);
+    do_treatment_.store(true);
 }
 
 void Referee::treatment(const cv::Mat& frame)
 {
-    if (target_ == -1) { return; }
+    if (target_ == -1 or !do_treatment_.load()) { return; }
+
+    auto now(std::chrono::system_clock::now());
+    if (std::chrono::duration_cast<std::chrono::milliseconds>(now - last_treatment) <  treatment_cooldown_) { return; }
+    last_treatment = now;
 
     cv::Mat treatment_frame;
-    {
-        std::lock_guard<std::mutex> tracker_lock(treatment_mtx_);
-        cv::cvtColor(frame, treatment_frame, CV_BGR2GRAY);
-    }
+    cv::cvtColor(frame, treatment_frame, CV_BGR2GRAY);
 
     // case of first observation
     if (targets_frame_[target_].empty())
@@ -68,21 +77,27 @@ void Referee::treatment(const cv::Mat& frame)
 
     // treatment: subtraction + binarize
     cv::Mat diff = targets_frame_[target_] - treatment_frame;
-    cv::threshold(diff, diff, diff_threshold_, 255, CV_THRESH_BINARY);
+    cv::Mat binary;
+    cv::threshold(diff, binary, diff_threshold_, 255, CV_THRESH_BINARY);
 
     // test phase
-    if (target_ == 0) cv::imshow(WIN_1, diff);
-    if (target_ == 1) cv::imshow(WIN_2, diff);
+    if (target_ == 0) cv::imshow(WIN_1, binary);
+    if (target_ == 1) cv::imshow(WIN_2, binary);
 
     // loser detection
-    size_t diff_px_nb(0);
-    for (size_t i = 0; i < diff.rows; ++i)
-        for (size_t j = 0; j < diff.cols; ++j)
+    int diff_px_nb(0);
+    for (int i = 0; i < binary.rows; ++i)
+        for (int j = 0; j < binary.cols; ++j)
         {
-            int px_value = diff.at<int>(i, j);
-            if (px_value == 255) ++diff_px_nb;
+            int px_value = binary.at<int>(i, j);
+            if (px_value > 0) ++diff_px_nb;
         }
-    if (lose_thres_ < diff_px_nb) lost_.store(target_);
+    //std::cout << "diff px nb = " << diff_px_nb << std::endl;
+    if (lose_thres_ < diff_px_nb) 
+    {
+        lost_.store(target_);
+        std::cout << "Player " << target_ << " a bougé! Retourne au point de départ!\n";
+    }
 
     // MAJ target_frame
     targets_frame_[target_] = treatment_frame.clone();

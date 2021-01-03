@@ -43,9 +43,9 @@ void CameraPanTilt::displayTask()
         cv::Mat raw_frame;
         while (keep_displaying_.load() && is_open)
         {
-            if (capture_.read(raw_frame))
+            if (capture_.read(frame_))
             {
-                cv::rotate(raw_frame, frame_, cv::ROTATE_180);
+                //cv::rotate(raw_frame, frame_, cv::ROTATE_180);
                 cv::imshow("Camera", frame_);
                 treatment(frame_);
             }
