@@ -55,4 +55,4 @@ private:
     void treatment(const cv::Mat& frame);
 };
 
-#endif
+#endif // __REFEREE_H__

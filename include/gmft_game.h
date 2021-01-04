@@ -21,6 +21,7 @@ class GMFTGame
     float victory_thresh_;
 
 public:
+    GMFTGame() = default;
     GMFTGame(std::shared_ptr<Lidar> lidar, std::shared_ptr<Referee> referee, float player_angle, float opening, float seuil, float victory_thresh=0.08);
     ~GMFTGame();
 

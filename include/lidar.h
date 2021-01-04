@@ -151,4 +151,4 @@ public:
     void measureTask();
 };
 
-#endif
+#endif // __LIDAR_H__
