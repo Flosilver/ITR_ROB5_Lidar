@@ -8,7 +8,6 @@ Referee::Referee(int capture_id, int pan_pin, int tilt_pin, float p_angle, doubl
     CameraPanTilt(capture_id, pan_pin, tilt_pin),
     player_angle_(p_angle),
     target_(-1),
-    lost_(-1),
     do_treatment_(true),
     diff_threshold_(threshold),
     lose_thres_(lose_thres),
@@ -95,7 +94,6 @@ void Referee::treatment(const cv::Mat& frame)
     //std::cout << "diff px nb = " << diff_px_nb << std::endl;
     if (lose_thres_ < diff_px_nb) 
     {
-        lost_.store(target_);
         std::cout << "Player " << target_ << " a bougé! Retourne au point de départ!\n";
     }
 

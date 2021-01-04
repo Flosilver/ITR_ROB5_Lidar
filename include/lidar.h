@@ -78,7 +78,15 @@ public:
      */
     std::shared_ptr<DCMotor> pivot() { return pivot_; }
 
+    /**
+     * Get the encoder of the motor the IR sensor is attached to.
+     * 
+     * @return the encoder of the motor the IR sensor is attached to.
+     */
     std::shared_ptr<const ShaftEncoder> encoder() const { return encoder_; }
+    /**
+     * @overload encoder()
+     */
     std::shared_ptr<ShaftEncoder> encoder() { return encoder_; }
 
     /**
