@@ -68,4 +68,6 @@ void ProximityTracker::track()
         }
         std::this_thread::sleep_for(track_sleep);
     }
+    camera_->stopDisplay();
+    lidar_->stop();
 }

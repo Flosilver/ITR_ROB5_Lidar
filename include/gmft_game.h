@@ -18,9 +18,10 @@ class GMFTGame
     float player_angle_;
     float opening_;
     float seuil_;
+    float victory_thresh_;
 
 public:
-    GMFTGame(std::shared_ptr<Lidar> lidar, std::shared_ptr<Referee> referee, float player_angle, float opening, float seuil);
+    GMFTGame(std::shared_ptr<Lidar> lidar, std::shared_ptr<Referee> referee, float player_angle, float opening, float seuil, float victory_thresh=0.08);
     ~GMFTGame();
 
     std::shared_ptr<const Lidar> lidar() const { return lidar_; }
@@ -36,7 +37,7 @@ public:
 
 private:
     void gamePlay();
-    void extract(float* src, std::list<Lidar::Measure>& scan, float& pos_j1, float& pos_j2);
-}
+    void extract(std::list<Lidar::Measure>& scan, float& pos_j1, float& pos_j2);
+};
 
 #endif

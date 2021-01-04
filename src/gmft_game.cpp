@@ -2,8 +2,9 @@
 #include <iostream>
 #include <list>
 #include <cmath>
+#include <functional>
 
-GMFTGame::GMFTGame(std::shared_ptr<Lidar> lidar, std::shared_ptr<Referee> referee, float player_angle, float opening, float seuil):
+GMFTGame::GMFTGame(std::shared_ptr<Lidar> lidar, std::shared_ptr<Referee> referee, float player_angle, float opening, float seuil, float victory_thresh):
 lidar_(lidar),
 referee_(referee),
 game_thread_(),
@@ -11,7 +12,8 @@ game_mtx_(),
 is_playing_(false),
 player_angle_(player_angle),
 opening_(opening),
-seuil_(seuil)
+seuil_(seuil),
+victory_thresh_(victory_thresh)
 {
     assert(lidar_ != nullptr);
     assert(referee_ != nullptr);
@@ -72,6 +74,24 @@ void GMFTGame::gamePlay()
 
         // La suite... TODO
         // A player is near enough -> he wins -> the end
+        if (0 < current_pos[0] &&  0 < current_pos[1])
+        {
+            if (current_pos[0] <= victory_thresh_ && current_pos[1] <= victory_thresh_)
+            {
+                std::cout << "\n-------\nEXAEQUO\n-------\n";
+                is_playing_.store(false);
+            }
+            else if (current_pos[0] <= victory_thresh_)
+            {
+                std::cout << "\n-------\nPLAYER 0 WINS\n-------\n";
+                is_playing_.store(false);
+            }
+            else if (current_pos[1] <= victory_thresh_ )
+            {
+                std::cout << "\n-------\nPLAYER 1 WINS\n-------\n";
+                is_playing_.store(false);
+            }
+        }
         
         // MAJ old_pos
         old_pos[0] = current_pos[0];
@@ -80,6 +100,8 @@ void GMFTGame::gamePlay()
         // game sleep
         std::this_thread::sleep_for(game_sleep);
     }
+    referee_->stopDisplay();
+    lidar_->stop();
 }
 
 void GMFTGame::extract(std::list<Lidar::Measure>& scan, float& pos_j1, float& pos_j2)

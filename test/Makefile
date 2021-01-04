@@ -28,5 +28,8 @@ camera_test: camera_test.cpp ../src/servo_motor.cpp ../src/camera_pan_tilt.cpp
 referee_test: referee_test.cpp ../src/servo_motor.cpp ../src/camera_pan_tilt.cpp ../src/referee.cpp
 	$(CXX) $^ -o $@ $(INCLUDE) $(CXXFLAGS) $(LDFLAGS) $(LIBFLAG)
 
+gmft_game_test: gmft_game_test.cpp ../src/gmft_game.cpp ../src/lidar.cpp ../src/motor_ctrl.cpp ../src/shaft_encoder.cpp ../src/dc_motor.cpp ../src/ir_sensor.cpp ../src/servo_motor.cpp ../src/camera_pan_tilt.cpp ../src/referee.cpp
+	$(CXX) $^ -o $@ $(INCLUDE) $(CXXFLAGS) $(LDFLAGS) $(LIBFLAG)
+
 clear:
-	rm shaft_encoder_test motor_ctrl_test lidar_test proximity_tracker_test
+	rm shaft_encoder_test motor_ctrl_test lidar_test proximity_tracker_test servo_test camera_test referee_test gmft_game_test
