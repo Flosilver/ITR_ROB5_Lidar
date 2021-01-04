@@ -19,7 +19,7 @@ class CameraPanTilt
 public:
     /**
      * Construct a CameraPanTilt.
-     * 
+     *
      * @param capture_id VideoCapture argument from opencv.
      * @param pan_pin Pan servomotor's pin number.
      * @param tilt_pin Tilt servomotor's pin number.
@@ -41,7 +41,7 @@ public:
 
     /**
      * Get the tilt servomotor of the Camera
-     * 
+     *
      * @return the tilt servomotor of the camera.
      */
     ServoMotor& tilt() { return *tilt_; }
@@ -52,7 +52,7 @@ public:
 
     /**
      * Get the current frame of the video.
-     * 
+     *
      * @return the current frame if the video.
      */
     cv::Mat& frame() { return frame_; }
@@ -63,13 +63,13 @@ public:
 
     /**
      * Rotate the pan servomotor to the desired angle.
-     * 
+     *
      * @param angle The desired angle.
      */
     void rotatePan(float angle);
     /**
      * Rotate the tilt servomotor to the desired angle.
-     * 
+     *
      * @param angle The desired angle.
      */
     void rotateTilt(float angle);
@@ -89,7 +89,15 @@ private:
      */
     void displayTask();
 
-    virtual void treatment(const cv::Mat& frame) {}
+    /**
+     * Process further the frame.
+     *
+     * Does nothing. This method is meant to allow further processing for child
+     * classes.
+     *
+     * @param frame The new frame from the camera.
+     */
+    virtual void process(const cv::Mat& frame) {}
 };
 
 #endif // __CAMERA_PAN_TILT_H__

@@ -40,14 +40,12 @@ void CameraPanTilt::displayTask()
     if (capture_.isOpened())
     {
         bool is_open(true);
-        cv::Mat raw_frame;
         while (keep_displaying_.load() && is_open)
         {
             if (capture_.read(frame_))
             {
-                //cv::rotate(raw_frame, frame_, cv::ROTATE_180);
                 cv::imshow("Camera", frame_);
-                treatment(frame_);
+                process(frame_);
             }
             is_open = cv::waitKey(33) != 27;
         }
@@ -58,6 +56,7 @@ void CameraPanTilt::displayTask()
 
 void CameraPanTilt::stopDisplay()
 {
+    // Break the thread infinite loop and wait for it to finish.
     keep_displaying_.store(false);
-    if (frame_thread_.joinable()) frame_thread_.join();
+    if (frame_thread_.joinable()) { frame_thread_.join(); }
 }

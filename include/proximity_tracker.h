@@ -4,8 +4,8 @@
 #include <memory>
 #include <mutex>
 #include <thread>
-#include "lidar.h"
 #include "camera_pan_tilt.h"
+#include "lidar.h"
 
 class ProximityTracker
 {
@@ -17,21 +17,21 @@ class ProximityTracker
 
 public:
     /**
-     * Construct a new dummy ProximityTracker.
-     */
-    ProximityTracker() = default;
-    /**
      * Construct a new ProximityTracker.
-     * 
+     *
      * @param lidar The Lidar pointer
      * @param designator The CameraPanTilt pointer
      */
     ProximityTracker(std::shared_ptr<Lidar> lidar, std::shared_ptr<CameraPanTilt> designator);
+
+    ProximityTracker() = delete;
+    ProximityTracker(const ProximityTracker& other) = delete;
     ~ProximityTracker();
+    ProximityTracker& operator=(const ProximityTracker& other) = delete;
 
     /**
      * Get the Lidar of the ProximityTracker
-     * 
+     *
      * @return the Lidar of the ProximityTracker
      */
     std::shared_ptr<const Lidar> lidar() const { return lidar_; }
@@ -42,7 +42,7 @@ public:
 
     /**
      * Get the CameraPanTilt of the ProximityTracker.
-     * 
+     *
      * @return the CameraPanTilt of the ProximityTracker.
      */
     std::shared_ptr<const CameraPanTilt> designator() const { return camera_; }
@@ -53,19 +53,21 @@ public:
 
     /**
      * Get the boolean flag to know if the thread is running.
-     * 
+     *
      * @return the boolean flag to know if the thread is running.
      */
     bool isRunning() const { return is_running_; }
 
     /**
-     * Start the thread.
+     * Start the proximity tracking.
      */
     void start();
+
     /**
-     * Stop the thread.
+     * Stop the proximity tracking.
      */
     void stop();
+
 private:
     /**
      * Thread method of track.

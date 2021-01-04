@@ -6,7 +6,7 @@
 int main(void)
 {
     std::shared_ptr<ShaftEncoder> encoder(new ShaftEncoder("/tmp/encoder", 420));
-    encoder->setOffset(encoder->measureIncrements());
+    encoder->offset(encoder->measureIncrements());
     std::shared_ptr<DCMotor> motor(new DCMotor(0, 0x14));
     std::shared_ptr<IRSensor> sensor(new IRSensor(4,1));
     Lidar lidar(motor,encoder,sensor,-0.5,0.5);

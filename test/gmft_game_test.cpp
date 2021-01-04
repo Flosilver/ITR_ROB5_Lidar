@@ -9,7 +9,7 @@ int main()
     std::cout << "wiring PI seted up\n";
 
     std::shared_ptr<ShaftEncoder> encoder(new ShaftEncoder("/tmp/encoder", 420));
-    encoder->setOffset(encoder->measureIncrements());
+    encoder->offset(encoder->measureIncrements());
 
     std::shared_ptr<DCMotor> motor(new DCMotor(0, 0x14));
 

@@ -5,19 +5,20 @@
 #include <mutex>
 #include "camera_pan_tilt.h"
 
-enum target
+enum Target
 {
+    NONE = -1,
     R_TARGET,
     L_TARGET
 };
 
 class Referee : public CameraPanTilt
 {
-    float player_angle_; ///< Angular position of the players.
-    int target_; ///< Actual target of the referee.
+    float player_angle_; ///< Angular position of the players (in radians).
+    Target target_; ///< Actual target of the referee.
     cv::Mat targets_frame_[2]; ///< Treatment images of each player.
     std::atomic<bool> do_treatment_; ///< Treatment flag.
-    double diff_threshold_; ///< Binarisation threshold of the treatment.
+    double diff_threshold_; ///< Binarization threshold of the treatment.
     int lose_thres_; ///< Threshold to detect an abnormal movement by a player.
     std::chrono::milliseconds treatment_cooldown_; ///< Cooldown between each treatment process.
     std::chrono::system_clock::time_point last_treatment; ///< Chrono to check the cooldown
@@ -35,24 +36,27 @@ public:
      */
     Referee(int capture_id, int pan_pin, int tilt_pin, float p_angle, double threshold, size_t lose_thres);
 
-    ~Referee();
+    Referee() = delete;
+    Referee(const Referee& other) = delete;
+    virtual ~Referee();
+    Referee& operator=(const Referee& other) = delete;
 
     /**
-     * Change the target attribut of the Referee. 
+     * Change the target attribut of the Referee.
      * Forbid the treatment process and cause a sleep of 1.2s.
      *
      * @param t The new target.
      **/
-    void goToTarget(int t);
+    void goToTarget(Target t);
 
 private:
     /**
      * Inherited method.
      * Detect targeted player movement.
-     * 
+     *
      * @param frame The frame of the camera.
      **/
-    void treatment(const cv::Mat& frame);
+    virtual void process(const cv::Mat& frame) override;
 };
 
 #endif // __REFEREE_H__

@@ -48,26 +48,33 @@ void ProximityTracker::track()
     bool keep_running(true);
     std::chrono::milliseconds track_sleep(1000);
 
+    // Start utility objects
     lidar_->start();
     camera_->display();
 
     while (keep_running)
     {
-        min_measure.distance = 1e10;
+        // Search the nearest obstacle
+        min_measure.distance = 1E10F;
         ir_scan = lidar_->scan();
-        std::cout << "--------------\n";
         for (Lidar::Measure& measure : ir_scan)
         {
             if (measure.distance < min_measure.distance) min_measure = measure;
         }
         std::cout << "[" << min_measure.orientation << ": " << min_measure.distance << "]\n";
-        if (min_measure.distance < 0.6) camera_->rotatePan(min_measure.orientation);
+
+        camera_->rotatePan(min_measure.orientation); // Rotate to the nearest obstacle
+
+        // Update the loop flag
         {
             std::lock_guard<std::mutex> tracker_lock(tracker_mutex_);
             keep_running = is_running_;
         }
+
         std::this_thread::sleep_for(track_sleep);
     }
+
+    // Stop utility objects
     camera_->stopDisplay();
     lidar_->stop();
 }

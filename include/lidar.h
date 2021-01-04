@@ -25,6 +25,7 @@ private:
     const std::shared_ptr<DCMotor> pivot_; ///< The pivot that the IR sensor is attached to.
     const std::shared_ptr<ShaftEncoder> encoder_; ///< The encoder
     const std::shared_ptr<IRSensor> sensor_; ///< The IR sensor measuring the distance.
+    const int motor_speed_; ///< The motor rotating speed.
     float min_angle_; ///< The start angle of a measurement (in radians).
     float max_angle_; ///< The end angle of a measurement (in radians).
     float angle_increment_; ///< The increment of the angle between 2 measurements during a scan (in radians).
@@ -35,7 +36,6 @@ private:
     std::mutex meas_mtx_; ///< The mutex used to synchronize operations around the measurements.
     std::thread meas_thread_; ///< The thread that performs the measurements.
     std::list<Measure> scan_; ///< The last measurements from the thread.
-    const int motor_speed_; ///< The motor rotating speed.
 
 public:
     /**
@@ -65,7 +65,16 @@ public:
           float max_angle = 1.0,
           int motor_speed = 100);
 
+    Lidar(const Lidar& other) = delete;
+
+    /**
+     * Destroy the Lidar.
+     *
+     * Stop the measurement.
+     */
     ~Lidar();
+
+    Lidar& operator=(const Lidar& other) = delete;
 
     /**
      * Get the pivot that the IR sensor is attached to.
@@ -80,7 +89,7 @@ public:
 
     /**
      * Get the encoder of the motor the IR sensor is attached to.
-     * 
+     *
      * @return the encoder of the motor the IR sensor is attached to.
      */
     std::shared_ptr<const ShaftEncoder> encoder() const { return encoder_; }
@@ -146,8 +155,28 @@ public:
      */
     std::list<Measure> scan();
 
+    /**
+     * Start to measure distances.
+     *
+     * Does nothing if already started.
+     */
     void start();
+
+    /**
+     * Stop to measure distances.
+     *
+     * Does nothing if if already stopped.
+     */
     void stop();
+
+private:
+    /**
+     * Task handling a IR scan.
+     *
+     * Move the motor clockwise to the max angle.
+     * Move the motor counter clockwise to the min angle and measure distances.
+     * Store the measurements and repeat.
+     */
     void measureTask();
 };
 

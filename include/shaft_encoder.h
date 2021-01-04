@@ -21,12 +21,17 @@ public:
      */
     ShaftEncoder(std::string device, long cpr, long offset = 0);
 
+    ShaftEncoder() = default;
+    ShaftEncoder(const ShaftEncoder& other) = delete;
+
     /**
-     * Destroy the Shaft Encoder
+     * Destroy the Shaft Encoder.
      *
      * Release the file descriptor associated with the device.
      */
     ~ShaftEncoder();
+
+    ShaftEncoder& operator=(const ShaftEncoder& other) = delete;
 
     /**
      * Get the count per revolution (in increments).
@@ -51,7 +56,7 @@ public:
      *
      * @return the offset from the device's home (in increments).
      */
-    void setOffset(long offset) { offset_ = offset; }
+    void offset(long offset) { offset_ = offset; }
 
     /**
      * Measures the position of the shaft in increments.

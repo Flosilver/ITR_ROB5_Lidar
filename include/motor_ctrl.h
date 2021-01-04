@@ -16,12 +16,11 @@ class MotorCtrl : public DCMotor
     std::thread ctrl_thread_; ///< The thread with the control loop.
     std::mutex ctrl_mtx_; ///< The mutex used by the control thread.
     bool is_controlled_; ///< Whether the control loop should keep running or not.
-    const long sp_; ///< The sampling period (in microseconds).
-    float desired_orientation_; ///< The desired shat orientation (in radians).
+    float desired_orientation_; ///< The desired shaft orientation (in radians).
+    const int sp_; ///< The sampling period (in microseconds).
     const float kp_; ///< The proportional gain of the PI corrector.
     const float ki_; ///< The integral gain of the PI corrector.
-    float error_int_; ///< The integrated error (in radians.seconds).
-    float anti_windup_; ///< The threshold at which to freeze the integral.
+    const float anti_windup_; ///< The threshold at which to freeze the integral.
 
 public:
     /**
@@ -40,6 +39,8 @@ public:
               float ki = 2,
               float anti_windup = 50.0);
 
+    MotorCtrl(const MotorCtrl& other) = delete;
+
     /**
      * Destroy the motor controller.
      *
@@ -47,6 +48,8 @@ public:
      * stopped.
      */
     virtual ~MotorCtrl();
+
+    MotorCtrl& operator=(const MotorCtrl& other) = delete;
 
     /**
      * Rotate the shaft to the desired orientation.
@@ -57,11 +60,38 @@ public:
      *
      * NOTE: The orientation is relative to the encoder's home.
      *
-     * @param orientation The disered orientation of the shaft (in radians).
+     * @param orientation The desired orientation of the shaft (in radians).
      */
     void rotateAsync(float orientation);
 
-    std::shared_ptr<ShaftEncoder> encoder(){return encoder_;}
+    /**
+     * Get the encoder shaft.
+     *
+     * @return The encoder shaft.
+     */
+    std::shared_ptr<const ShaftEncoder> encoder() const { return encoder_; }
+    /**
+     * @overload encoder()
+     */
+    std::shared_ptr<ShaftEncoder> encoder() { return encoder_; }
+
+    /**
+     * The sampling period (in microseconds).
+     *
+     * @return The sampling period (in microseconds).
+     */
+    int samplingPeriode() const { return sp_; }
+
+    /**
+     * The desired orientation of the shaft.
+     *
+     * @return The desired orientation of the shaft (in radians).
+     */
+    float desiredOrientation()
+    {
+        std::lock_guard<std::mutex> ctrl_lock(ctrl_mtx_);
+        return desired_orientation_;
+    }
 
 private:
     /**

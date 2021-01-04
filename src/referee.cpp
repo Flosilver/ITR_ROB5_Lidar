@@ -7,42 +7,37 @@
 Referee::Referee(int capture_id, int pan_pin, int tilt_pin, float p_angle, double threshold, size_t lose_thres) :
     CameraPanTilt(capture_id, pan_pin, tilt_pin),
     player_angle_(p_angle),
-    target_(-1),
+    target_(Target::NONE),
     do_treatment_(true),
     diff_threshold_(threshold),
     lose_thres_(lose_thres),
     treatment_cooldown_(500)
 {
-    //cv::namedWindow(WIN_1, CV_WINDOW_AUTOSIZE);
-    //cv::namedWindow(WIN_2, CV_WINDOW_AUTOSIZE);
-    rotatePan(0);
-    //rotateTilt(0);
+    rotatePan(0.0F);
     auto now(std::chrono::system_clock::now());
     last_treatment = now;
 }
 
 Referee::~Referee()
 {
-    targets_frame_[0].deallocate();
-    targets_frame_[1].deallocate();
     cv::destroyWindow(WIN_1);
     cv::destroyWindow(WIN_2);
 }
 
-void Referee::goToTarget(int t)
+void Referee::goToTarget(Target t)
 {
-    do_treatment_.store(false);
-    std::chrono::milliseconds delay(1200);
+    do_treatment_.store(false); // Prevent treament while the motor is moving
+    // Move the motor to the given target
     switch (t)
     {
-    case target::R_TARGET:
-        target_ = target::R_TARGET;
+    case Target::R_TARGET:
+        target_ = Target::R_TARGET;
         rotatePan(-player_angle_);
         targets_frame_[target_] = cv::Mat();
         break;
 
-    case target::L_TARGET:
-        target_ = target::L_TARGET;
+    case Target::L_TARGET:
+        target_ = Target::L_TARGET;
         rotatePan(player_angle_);
         targets_frame_[target_] = cv::Mat();
         break;
@@ -52,38 +47,41 @@ void Referee::goToTarget(int t)
                   << "\n";
         break;
     }
+    // Wait for the motor to stabilize
+    std::chrono::milliseconds delay(1200);
     std::this_thread::sleep_for(delay);
-    do_treatment_.store(true);
+
+    do_treatment_.store(true); // Re-enable the image processing
 }
 
-void Referee::treatment(const cv::Mat& frame)
+void Referee::process(const cv::Mat& frame)
 {
-    if (target_ == -1 or !do_treatment_.load()) { return; }
-
+    if (target_ == NONE || !do_treatment_.load()) { return; }
+    // Cooldown between two checks
     auto now(std::chrono::system_clock::now());
-    if (std::chrono::duration_cast<std::chrono::milliseconds>(now - last_treatment) <  treatment_cooldown_) { return; }
+    if (std::chrono::duration_cast<std::chrono::milliseconds>(now - last_treatment) < treatment_cooldown_) { return; }
     last_treatment = now;
 
     cv::Mat treatment_frame;
     cv::cvtColor(frame, treatment_frame, CV_BGR2GRAY);
 
-    // case of first observation
+    // Case of first observation
     if (targets_frame_[target_].empty())
     {
         targets_frame_[target_] = treatment_frame.clone();
         return;
     }
 
-    // treatment: subtraction + binarize
+    // Treatment: subtract and binarize
     cv::Mat diff = targets_frame_[target_] - treatment_frame;
     cv::Mat binary;
     cv::threshold(diff, binary, diff_threshold_, 255, CV_THRESH_BINARY);
 
-    // test phase
+    // Visualization
     if (target_ == 0) cv::imshow(WIN_1, binary);
     if (target_ == 1) cv::imshow(WIN_2, binary);
 
-    // loser detection
+    // Loser detection
     int diff_px_nb(0);
     for (int i = 0; i < binary.rows; ++i)
         for (int j = 0; j < binary.cols; ++j)
@@ -91,13 +89,8 @@ void Referee::treatment(const cv::Mat& frame)
             int px_value = binary.at<int>(i, j);
             if (px_value > 0) ++diff_px_nb;
         }
-    //std::cout << "diff px nb = " << diff_px_nb << std::endl;
-    if (lose_thres_ < diff_px_nb) 
-    {
-        std::cout << "Player " << target_ << " a bougé! Retourne au point de départ!\n";
-    }
+    if (lose_thres_ < diff_px_nb) { std::cout << "Joueur " << target_ << " a bougé! Retourne au point de départ!\n"; }
 
-    // MAJ target_frame
-    targets_frame_[target_] = treatment_frame.clone();
-    treatment_frame.deallocate();
+    // Update the target frame
+    targets_frame_[target_] = treatment_frame;
 }

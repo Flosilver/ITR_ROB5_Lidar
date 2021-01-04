@@ -19,12 +19,12 @@ ShaftEncoder::ShaftEncoder(std::string device, long cpr, long offset) : offset_(
 
 ShaftEncoder::~ShaftEncoder()
 {
-    if (file_desc_ > 0) // Close the device iff it has been open.
-        if (close(file_desc_) == -1)
-        {
-            std::cerr << "Error in file " << __FILE__ << " at line " << __LINE__
-                      << ": Failed to close the device: " << std::strerror(errno) << std::endl;
-        }
+    // Close the device iff it has been open.
+    if (file_desc_ > 0 && close(file_desc_) == -1)
+    {
+        std::cerr << "Error in file " << __FILE__ << " at line " << __LINE__
+                  << ": Failed to close the device: " << std::strerror(errno) << std::endl;
+    }
 }
 
 long ShaftEncoder::measureIncrements() const

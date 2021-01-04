@@ -1,57 +1,73 @@
 #include "ir_sensor.h"
-
 #include <cstring>
 #include <iostream>
+#include <math.h>
 #include <sstream>
 #include <stdexcept>
 #include <unistd.h>
-#include <math.h>
-
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
 
-using namespace std;
-
 IRSensor::IRSensor(int addr, int nb_pin) : pin_(nb_pin), i2c_addr_(addr)
 {
-    // TODO: shit pin gestion
     fd_ = wiringPiI2CSetup(i2c_addr_);
     // Error handling
     if (fd_ == -1)
     {
-        ostringstream err_msg;
+        std::ostringstream err_msg;
         err_msg << "wiringPiI2CSetup(" << i2c_addr_ << ") has failed: " << strerror(errno) << "\n";
         throw std::runtime_error(err_msg.str());
     }
 }
 
+IRSensor::IRSensor(IRSensor&& rval) : pin_(rval.pin_), i2c_addr_(rval.i2c_addr_), fd_(rval.fd_)
+{
+    // Release the resources from the rvalue.
+    rval.fd_ = -1;
+}
+
 IRSensor::~IRSensor()
 {
-    // TODO: liberation de la pin
+    // Release the resource.
     if (fd_ >= 0) close(fd_);
-    cout << "\tdest IR sensor" << endl;
+}
+
+IRSensor& IRSensor::operator=(IRSensor&& rval)
+{
+    // Free existing resources.
+    if (fd_ >= 0) close(fd_);
+
+    // Copy the data.
+    pin_ = rval.pin_;
+    i2c_addr_ = rval.i2c_addr_;
+    fd_ = rval.fd_;
+
+    // Release the resources from the rvalue.
+    rval.fd_ = -1;
+    return *this;
 }
 
 float IRSensor::measure() const
 {
-    int reg = pin_ + 0x20;
+    int registry(pin_ + 0x20);
+    wiringPiI2CWrite(fd_, registry);
 
-    wiringPiI2CWrite(fd_, reg);
-    int res = wiringPiI2CReadReg16(fd_, reg);
+    int res(wiringPiI2CReadReg16(fd_, registry));
     // Error handling
     if (res < 0)
     {
-        ostringstream err_msg;
-        err_msg << "wiringPiI2CReadReg16(" << fd_ << ", " << reg << ") has failed: " << strerror(errno) << "\n";
-        throw runtime_error(err_msg.str());
+        std::ostringstream err_msg;
+        err_msg << "wiringPiI2CReadReg16(" << fd_ << ", " << registry << ") has failed: " << strerror(errno) << "\n";
+        throw std::runtime_error(err_msg.str());
     }
 
-    return measToDist(((float)res) / 1000.);
+    return measToDist(res / 1000.0F);
 }
 
-float IRSensor::measToDist(const float mes) const{
+float IRSensor::measToDist(float mes) const
+{
     if (mes < 0.35) return 0.80;
     if (mes > 2.288) return 0.09;
 
-    return 0.235 * pow(mes,-1.15);
+    return 0.235 * std::pow(mes, -1.15);
 }

@@ -6,7 +6,7 @@
 int main(void)
 {
     std::shared_ptr<ShaftEncoder> encoder(new ShaftEncoder("/tmp/encoder", 420));
-    encoder->setOffset(encoder->measureIncrements());
+    encoder->offset(encoder->measureIncrements());
     MotorCtrl motor(0, 0x14, encoder);
 
     std::cout << "Press Enter to continue...";

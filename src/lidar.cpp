@@ -5,7 +5,15 @@
 #include <functional>
 #include <iostream>
 
-using namespace std;
+float Lidar::normalize(float angle)
+{
+    float normalized_angle(angle);
+    while (normalized_angle < -M_PI)
+        normalized_angle += 2 * M_PI;
+    while (normalized_angle >= M_PI)
+        normalized_angle -= 2 * M_PI;
+    return normalized_angle;
+}
 
 Lidar::Lidar(std::shared_ptr<DCMotor> pivot,
              std::shared_ptr<ShaftEncoder> encoder,
@@ -16,6 +24,7 @@ Lidar::Lidar(std::shared_ptr<DCMotor> pivot,
     pivot_(pivot),
     encoder_(encoder),
     sensor_(sensor),
+    motor_speed_(100),
     min_angle_(normalize(min_angle)),
     max_angle_(normalize(max_angle)),
     angle_increment_(0.1),
@@ -23,7 +32,9 @@ Lidar::Lidar(std::shared_ptr<DCMotor> pivot,
     motor_stuck_(100),
     unstuck_cooldown_(500),
     is_measuring_(false),
-    motor_speed_(100)
+    meas_mtx_(),
+    meas_thread_(),
+    scan_()
 {
     assert(pivot != nullptr);
     assert(encoder != nullptr);
@@ -134,14 +145,5 @@ void Lidar::measureTask()
         }
         std::this_thread::sleep_for(motor_sleep_);
     }
-}
-
-float Lidar::normalize(float angle)
-{
-    float normalized_angle(angle);
-    while (normalized_angle < -M_PI)
-        normalized_angle += 2 * M_PI;
-    while (normalized_angle >= M_PI)
-        normalized_angle -= 2 * M_PI;
-    return normalized_angle;
+    pivot_->stop();
 }
