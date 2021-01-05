@@ -4,7 +4,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-int main(int argc, char const* argv[])
+int main(void)
 {
     puts("Entering client");
     int fd = open("/dev/encoder", O_RDWR);
@@ -14,11 +14,11 @@ int main(int argc, char const* argv[])
         return -1;
     }
     union {
-        char bytes[4];
+        char bytes[sizeof(long)];
         long value;
     } data;
-    int rd_bytes = read(fd, data.bytes, 4);
-    if (rd_bytes != 4) { printf("Read %d bytes !\n", rd_bytes); }
+    int rd_bytes = read(fd, data.bytes, sizeof(long));
+    if (rd_bytes != sizeof(long)) { printf("Read %d bytes !\n", rd_bytes); }
     else
     {
         printf("Read: %ld\n", data.value);

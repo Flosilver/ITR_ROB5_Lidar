@@ -30,11 +30,11 @@ ShaftEncoder::~ShaftEncoder()
 long ShaftEncoder::measureIncrements() const
 {
     union {
-        char bytes[4];
+        char bytes[sizeof(long)];
         long value;
     } data; // Easy conversion from bytes to long
-    int bytes_amount = read(file_desc_, data.bytes, 4);
-    if (bytes_amount != 4)
+    int bytes_amount = read(file_desc_, data.bytes, sizeof(long));
+    if (bytes_amount != sizeof(long))
     {
         std::stringstream msg;
         msg << "Error in file " << __FILE__ << " at line " << __LINE__ << ": Invalid read size." << std::endl;

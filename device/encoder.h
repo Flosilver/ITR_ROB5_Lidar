@@ -3,32 +3,23 @@
 
 #include <linux/fs.h>
 
-// Numéros des pins utilisés :
+// Pin number
 #define IRQ_PIN_1 22
 #define IRQ_PIN_2 23
 
-#define TRIGONOMETRIC 0
-#define CLOCKWISE 1
-
-// Structure utilisée pour traiter les interruptions :
+// Struct used to handle interruptions
 typedef struct encoder_data
 {
-    char* label;
-    int irq_pin;
-    long* count;
-    char direction;
-    unsigned int irq;
+    char* label; // The interruption name.
+    int irq_pin; // The interruption pin.
+    long* count; // The shaft position in increments.
+    unsigned int irq; // The interruption identifier.
 } encoder_data_t;
 
-union float_converter {
+// Union used to easily convert long type to an array of bytes.
+typedef union float_converter {
     long count;
-    char count_byte[4];
-};
-
-static int
-encoder_open(struct inode* inode, struct file* file);
-static int encoder_release(struct inode* inode, struct file* file);
-static ssize_t encoder_write(struct file* file, const char* buf, size_t count, loff_t* ppos);
-static ssize_t encoder_read(struct file* file, char* buf, size_t count, loff_t* ppos);
+    char count_byte[sizeof(long)];
+} float_converter_t;
 
 #endif // __IR_SENSOR_H__
