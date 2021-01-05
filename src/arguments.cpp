@@ -1,16 +1,22 @@
 #include "arguments.h"
 
-void printHelp(std::ostream& out)
+Arguments::Arguments() : mode_(Mode::INVALID), lidar_(Lidar::INVALID) {}
+
+Arguments::Arguments(int argc, const char* argv[]) : Arguments() { parseArgs(argc, argv); }
+
+void Arguments::printHelp(std::ostream& out)
 {
     out << "  --help\t Print this manual.\n";
     out << "  --proximity-tracker or -pt\n\tLaunch the proximity tracker program.\n";
     out << "  --grandmother-footstep or -gf\n\tLaunch the grandmother footstep grame.\n";
+    out << "  --lidar [step|continuous] or -l [step|continuous]\n\t The type of LiDAR to use.\n";
     out << "NOTE: --proximity-tracker and --grandmother-footstep are mutually exclusive.\n";
 }
 
-void parseArgs(int argc, const char* argv[], Mode& mode)
+void Arguments::parseArgs(int argc, const char* argv[])
 {
-    mode = INVALID;
+    mode_ = Mode::INVALID;
+    lidar_ = Lidar::INVALID;
     // Arguments parsing
     int i(1);
     for (; i < argc; ++i)
@@ -24,15 +30,26 @@ void parseArgs(int argc, const char* argv[], Mode& mode)
         }
         else if (arg == "--proximity-tracker" || arg == "-pt")
         {
-            if (mode == INVALID) { mode = PROXIMITY_TRACKER; }
+            if (mode_ == Mode::INVALID) { mode_ = Mode::PROXIMITY_TRACKER; }
             else
                 break; // The mode is already set.
         }
         else if (arg == "--grandmother-footstep" || arg == "-gf")
         {
-            if (mode == INVALID) { mode = GRANDMOTHER_FOOTSTEP; }
+            if (mode_ == Mode::INVALID) { mode_ = Mode::GRANDMOTHER_FOOTSTEP; }
             else
                 break; // The mode is already set.
+        }
+        else if (arg == "--lidar" || arg == "-l")
+        {
+            if (i + 1 == argc || lidar_ != Lidar::INVALID) break; // Missing argument or already defined
+            std::string lidar(argv[++i]);
+            if (lidar == "step")
+                lidar_ = Lidar::STEP;
+            else if (lidar == "continuous")
+                lidar_ = Lidar::CONTINUOUS;
+            else
+                break;
         }
         else
             break; // This argument is not valid.

@@ -21,6 +21,7 @@ class MotorCtrl : public DCMotor
     const float kp_; ///< The proportional gain of the PI corrector.
     const float ki_; ///< The integral gain of the PI corrector.
     const float anti_windup_; ///< The threshold at which to freeze the integral.
+    const int max_speed_;
 
 public:
     /**
@@ -35,9 +36,10 @@ public:
     MotorCtrl(int pin,
               int i2c_addr,
               std::shared_ptr<ShaftEncoder> encoder,
-              float kp = 200.0,
+              float kp = 500.0,
               float ki = 2,
-              float anti_windup = 50.0);
+              float anti_windup = 50.0,
+              int max_speed = 100);
 
     MotorCtrl(const MotorCtrl& other) = delete;
 

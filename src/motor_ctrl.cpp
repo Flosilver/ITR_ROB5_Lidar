@@ -10,7 +10,8 @@ MotorCtrl::MotorCtrl(int pin,
                      std::shared_ptr<ShaftEncoder> encoder,
                      float kp,
                      float ki,
-                     float anti_windup) :
+                     float anti_windup,
+                     int max_speed) :
     DCMotor(pin, i2c_addr),
     encoder_(encoder),
     ctrl_thread_(),
@@ -20,7 +21,8 @@ MotorCtrl::MotorCtrl(int pin,
     sp_(1E3),
     kp_(kp),
     ki_(ki),
-    anti_windup_(anti_windup)
+    anti_windup_(anti_windup),
+    max_speed_(max_speed)
 {
     assert(pin >= 0);
     assert(i2c_addr >= 0);
@@ -77,6 +79,11 @@ void MotorCtrl::control()
         }
         // Send the command to the motor
         int int_command = (int)std::round(float_command);
+        if (int_command > max_speed_) { int_command = max_speed_; }
+        else if (int_command < -max_speed_)
+        {
+            int_command = -max_speed_;
+        }
         run(int_command);
 
         std::this_thread::sleep_for(period_duration);

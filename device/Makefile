@@ -9,6 +9,7 @@ clean:
 
 install:
 	sudo insmod encoder.ko
+	sudo mknod -m 666 /tmp/encoder c 239 0
 
 uninstall:
 	sudo rmmod encoder.ko

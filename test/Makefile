@@ -4,9 +4,6 @@ INCLUDE := -I../include -I/usr/local/include
 LDFLAGS := -L/usr/local/lib
 LIBFLAG := -lwiringPi -lpthread `pkg-config --libs opencv`
 
-encoder_file:
-	sudo mknod -m 666 /tmp/encoder c 239 0
-
 shaft_encoder_test: shaft_encoder_test.cpp ../src/shaft_encoder.cpp
 	$(CXX) $^ -o $@ $(INCLUDE) $(CXXFLAGS) $(LDFLAGS) $(LIBFLAG)
 
