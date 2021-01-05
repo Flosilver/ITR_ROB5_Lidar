@@ -17,11 +17,13 @@ int main(int argc, const char* argv[])
     encoder->offset(encoder->measureIncrements());
     std::shared_ptr<IRSensor> sensor(new IRSensor(4, 1));
     // Build the specified lidar.
+    int scan_cooldown(1000);
     std ::shared_ptr<Lidar> lidar;
     if (args.lidar() == Arguments::Lidar::STEP)
     {
         std::shared_ptr<MotorCtrl> motor(new MotorCtrl(0, 0x14, encoder));
         lidar = std::shared_ptr<Lidar>(new LidarStep(motor, sensor, -0.5, 0.5));
+        scan_cooldown = 1;
     }
     else // By default, use a continuous motor
     {
@@ -32,7 +34,7 @@ int main(int argc, const char* argv[])
     if (args.mode() == Arguments::Mode::PROXIMITY_TRACKER)
     {
         std::shared_ptr<CameraPanTilt> camera(new CameraPanTilt(0, 22, 0));
-        ProximityTracker tracker(lidar, camera);
+        ProximityTracker tracker(lidar, camera, scan_cooldown);
         tracker.start();
         std::cout << "Press <Enter> to terminate.\n";
         std::cin.get();
