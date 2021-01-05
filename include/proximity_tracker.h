@@ -14,6 +14,7 @@ class ProximityTracker
     std::mutex tracker_mutex_; ///< mutex for flag gestion
     std::shared_ptr<Lidar> lidar_; ///< Pointer to the Lidar
     std::shared_ptr<CameraPanTilt> camera_; ///< Pointer to the CameraPanTilt
+    std::chrono::milliseconds track_sleep_;
 
 public:
     /**
@@ -21,8 +22,9 @@ public:
      *
      * @param lidar The Lidar pointer
      * @param designator The CameraPanTilt pointer
+     * @param scan_cooldown The time to wait between two scans (in milliseconds).
      */
-    ProximityTracker(std::shared_ptr<Lidar> lidar, std::shared_ptr<CameraPanTilt> designator);
+    ProximityTracker(std::shared_ptr<Lidar> lidar, std::shared_ptr<CameraPanTilt> designator, int scan_cooldown = 1000);
 
     ProximityTracker() = delete;
     ProximityTracker(const ProximityTracker& other) = delete;

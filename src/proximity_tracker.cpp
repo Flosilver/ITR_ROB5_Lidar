@@ -5,12 +5,13 @@
 #include <iostream>
 #include <list>
 
-ProximityTracker::ProximityTracker(std::shared_ptr<Lidar> lidar, std::shared_ptr<CameraPanTilt> designator) :
+ProximityTracker::ProximityTracker(std::shared_ptr<Lidar> lidar, std::shared_ptr<CameraPanTilt> designator, int scan_cooldown) :
     is_running_(false),
     tracker_thread_(),
     tracker_mutex_(),
     lidar_(lidar),
-    camera_(designator)
+    camera_(designator),
+    track_sleep_(scan_cooldown)
 {
     assert(lidar_ != nullptr);
     assert(camera_ != nullptr);
@@ -46,7 +47,6 @@ void ProximityTracker::track()
     std::list<Lidar::Measure> ir_scan;
     Lidar::Measure min_measure;
     bool keep_running(true);
-    std::chrono::milliseconds track_sleep(1000);
 
     // Start utility objects
     lidar_->start();
@@ -61,7 +61,7 @@ void ProximityTracker::track()
         {
             if (measure.distance < min_measure.distance) min_measure = measure;
         }
-        std::cout << "[" << min_measure.orientation << ": " << min_measure.distance << "]\n";
+        std::cout << "Object detected at " << min_measure.orientation << " rad and " << min_measure.distance << " m\n";
 
         camera_->rotatePan(min_measure.orientation); // Rotate to the nearest obstacle
 
@@ -71,7 +71,7 @@ void ProximityTracker::track()
             keep_running = is_running_;
         }
 
-        std::this_thread::sleep_for(track_sleep);
+        std::this_thread::sleep_for(track_sleep_);
     }
 
     // Stop utility objects
