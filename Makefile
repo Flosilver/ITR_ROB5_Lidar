@@ -1,4 +1,4 @@
-EXE := lidar
+EXE := itr-project
 
 
 SRC_DIR := src
@@ -10,9 +10,9 @@ OBJ := $(addprefix $(OBJ_DIR)/, $(notdir $(patsubst %.cpp, %.o, $(SRC))))
 
 CXX := g++
 INCLUDE := -Iinclude -I/usr/local/include
-CFLAGS := -g -Wall -std=c++11
+CFLAGS := -g -Wall -std=c++11 `pkg-config --cflags opencv`
 LDFLAGS := -L/usr/local/lib
-LIBFLAG := -lwiringPi -lpthread
+LIBFLAG := -lwiringPi -lpthread -lwiringPi -lpthread `pkg-config --libs opencv`
 
 .PHONY: all clean mrproper remake rerun
 
@@ -24,7 +24,7 @@ $(EXE): $(OBJ)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
 	$(CXX) -c $< -o $@ $(CFLAGS) $(INCLUDE) $(LIBFLAG)
-	
+
 $(OBJ_DIR):
 	mkdir $@
 
