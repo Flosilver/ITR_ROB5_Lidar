@@ -77,10 +77,6 @@ void Referee::process(const cv::Mat& frame)
     cv::Mat binary;
     cv::threshold(diff, binary, diff_threshold_, 255, CV_THRESH_BINARY);
 
-    // Visualization
-    if (target_ == 0) cv::imshow(WIN_1, binary);
-    if (target_ == 1) cv::imshow(WIN_2, binary);
-
     // Loser detection
     int diff_px_nb(0);
     for (int i = 0; i < binary.rows; ++i)

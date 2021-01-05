@@ -5,7 +5,9 @@
 #include <iostream>
 #include <list>
 
-ProximityTracker::ProximityTracker(std::shared_ptr<Lidar> lidar, std::shared_ptr<CameraPanTilt> designator, int scan_cooldown) :
+ProximityTracker::ProximityTracker(std::shared_ptr<Lidar> lidar,
+                                   std::shared_ptr<CameraPanTilt> designator,
+                                   int scan_cooldown) :
     is_running_(false),
     tracker_thread_(),
     tracker_mutex_(),
@@ -61,9 +63,14 @@ void ProximityTracker::track()
         {
             if (measure.distance < min_measure.distance) min_measure = measure;
         }
-        std::cout << "Object detected at " << min_measure.orientation << " rad and " << min_measure.distance << " m\n";
 
-        camera_->rotatePan(min_measure.orientation); // Rotate to the nearest obstacle
+        // Rotate to the nearest obstacle
+        if (min_measure.distance < 0.75F) // Ensure an object has been detected
+        {
+            std::cout << "Object detected at " << min_measure.orientation << " rad and " << min_measure.distance
+                      << " m\n";
+            camera_->rotatePan(min_measure.orientation);
+        }
 
         // Update the loop flag
         {

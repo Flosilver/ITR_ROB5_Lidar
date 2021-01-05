@@ -92,7 +92,6 @@ void GMFTGame::gamePlay()
                 std::cout << "\n-------\nPLAYER 1 WINS\n-------\n";
                 is_playing_.store(false);
             }
-            std::cout << "Positions:\n  J0:\t" << current_pos[0] << "\n  J1:\t" << current_pos[1] << std::endl;
         }
         // Update the last player position.
         old_pos[0] = current_pos[0];
