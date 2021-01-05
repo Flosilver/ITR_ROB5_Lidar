@@ -12,7 +12,7 @@
 class LidarStep : public Lidar
 {
     const std::shared_ptr<MotorCtrl> pivot_; ///< The pivot that the IR sensor is attached to.
-    std::chrono::microseconds motor_sleep_; ///< The time to sleep after a desired angle is given to the motor.
+    std::chrono::milliseconds motor_sleep_; ///< The time to sleep after a desired angle is given to the motor.
 
 public:
     /**
@@ -48,13 +48,13 @@ public:
      *
      * @return the time to sleep after a desired angle is given to the motor.
      */
-    std::chrono::microseconds motorSleepDuration() const { return motor_sleep_; }
+    std::chrono::milliseconds motorSleepDuration() const { return motor_sleep_; }
     /**
      * Set the time to sleep after a desired angle is given to the motor.
      *
      * @param duration the time to sleep after a desired angle is given to the motor.
      */
-    void motorSleepDuration(const std::chrono::microseconds& duration) { motor_sleep_ = duration; }
+    void motorSleepDuration(const std::chrono::milliseconds& duration) { motor_sleep_ = duration; }
 
     /**
      * Measure the distance to any obstacle.
