@@ -10,7 +10,7 @@ Source d'inspiration [dépôt grove](https://github.com/Seeed-Studio/grove.py) p
 
 ## Figure imposée
 
-### Concepte
+### Concept
 
 Utiliser une carte raspberry pi3 pour créer un mini-système qui détecte les objects proches grâce à un capteur infra-rouge monté sur un moteur à courant continu. Une caméra est là pour visionner ce que le capteur infra-rouge détecte.
 
