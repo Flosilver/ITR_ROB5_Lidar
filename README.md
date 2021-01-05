@@ -1,66 +1,80 @@
 # README - LIDAR project - ROB5 Temps réel
 
-Auteurs : [F. Beroujon](https://github.com/Flosilver) & [F. Cormée](https://github.com/Florian-Cormee)
+Auteurs : [F. Beroujon](https://github.com/Flosilver) &
+[F. Cormée](https://github.com/Florian-Cormee)
 
----
+## 1. Installation
 
-Source d'inspiration [dépôt grove](https://github.com/Seeed-Studio/grove.py) plus particulièrement [adc.py](https://github.com/Seeed-Studio/grove.py/blob/master/grove/adc.py) pour la lecture de registre du sensor infra red
+Se placer dans un premier temps dans le dossier **device**.
 
----
+```bash
+cd device
+make
+make install
+```
 
-## Figure imposée
+Revenir dans le dossier du projet et compiler le projet !
 
-### Concept
+```bash
+cd..
+make
+```
 
-Utiliser une carte raspberry pi3 pour créer un mini-système qui détecte les objects proches grâce à un capteur infra-rouge monté sur un moteur à courant continu. Une caméra est là pour visionner ce que le capteur infra-rouge détecte.
+## 2. Lancer le programme
 
-### Lancer le programme
+```bash
+./itr-project <--proximity-tracker|-pt> [--lidar [step|continuous]]
+```
 
-Se placer dans un premier temps dans le dossier **device** (`cd device/`).
+La commande ci-dessus permet de démarrer le programme en mode *Figure imposée*.
+L'argument `--proximity-tracker` ou `-pt` indique la sélection du mode. Cet
+argument est obligatoire. En l'absence de cet arguement, une aide sera affichée.
+L'argument `--lidar [step|continuous]` indique le mode de fonctionnement désiré
+du LiDAR. En mode *step*, le LiDAR alterne des phases de déplacement et de
+mesure. En mode *continuous*, le LiDAR ne s'arrête pas pendant une mesure.
 
-> make
->
-> make install
+```bash
+./itr-project <--grandmother-footstep|-gf>
+```
 
-Revenir dans le dossier du projet et compiler le projet (`cd ..`)!
+La commande ci-dessus permet de démarrer le programme en mode *Figure libre*.
+L'argument `--grandmother-footstep` ou `-gf` indique la sélection du mode. Cet
+argument est obligatoire. En l'absence de cet arguement, une aide sera affichée.
 
-> make
->
-> ./itr-project --proximity-tracker or -pt --lidar [step|continuous] or -l [step|continuous]
+Nous déconseillons l'utilisation de l'option `--lidar` ou `-l` pour lancer la
+*figure libre*. En effet, sans cette option, le programme utilisera la version
+continue du LiDAR qui est plus propice au jeu.
 
-### Désinstaller proprement
+## 3. Figure imposée
 
-Dans le dossier du projet faire:
+Utiliser une carte Raspberry Pi 3 pour créer un système qui détecte les objets
+proches grâce à un capteur infra-rouge monté sur un moteur à courant continu.
+Une caméra est là pour visionner ce que le capteur infra-rouge détecte.
 
-> make mrproper
+## 4. Figure libre
 
-Dans le dossier **device**, faire:
+Nous devions reprendre le système de la *figure imposée* composée d'un LiDAR et
+d'une campéra pan-tilt. Nous avons décidé de créer une sorte de 1,2,3 soleil de
+son nom anglais grandmother's footstep (d'où le nom de la class C++). En effet,
+2 joueurs s'affrontent et doivent se rapprocher le plus possible du lidar à
+l'avant du système. Mais le LiDAR est là pour les surveiller et indique à la
+caméra de regarder celui qui bouge trop. Une fois sur sa cible, la caméra a pour
+objectif de repérer de trop grand mouvements en face d'elle avec du traitment
+opencv basique. Si le joueur surveillé par la caméra est pris en flagrant déli,
+il lui sera indiqué dans le terminal de revenir au point de départ. La partie
+s'arrête lorsque l'un des joueurs est arrivé assez proche du LiDAR.
 
-> make uninstall
->
-> make clean
-## Figure libre
+## 5. Désinstallation
 
-### Concept
+Dans le dossier du projet faire :
 
-Nous devions reprendre le système de la figure imposée copomsée d'un LiDAR et d'une campéra pan-tilt. Nous avons décidé de créer une sorte de 1,2,3 soleil de son nom anglais grandmother's footstep (d'où le nom de la class C++). En effet, 2 jouers s'affrontent et doivent se rapprocher le plus possible du lidar à l'avant du système. Mais le LiDAR est là pour les surveillez et indique à la caméra de regarder celui qui bouge trop. une fois sur sa cible, la caméra a pour objectif de repérer de trop grand mouvmeent en face d'elle avec du traitment opencv basic. Si le joueur surveillé par la caméra est pris en flagrant déli, il lui sera indiqué dans le terminal de revenir au point de départ. La partie s'arrête lorsque l'un des joueurs est arrivé assez proche du LiDAR.
+```bash
+make mrproper
+```
 
-### Lancer le programme
+Dans le dossier **device**, faire :
 
-Ici aussi il fait utiliser le compteur incrémental de **device**.
-
-> make
->
-> make install
-
-Revenir dans le dossier du projet et compiler le projet (`cd ..`)!
-
-> make
->
-> ./itr-project --grandmother-footstep or -gf
-
-Nous déconseillons l'utilisation de l'option `--lidar` ou `-l` pour lancer le `GMFTGame`. En effet, sans cette option, le programme utilisera la version continue du LiDAR qui est plus propice au jeu.
-
-### Désinstaller proprement
-
-Idem que pour la figure imposée.
+```bash
+make uninstall
+make clean
+```
