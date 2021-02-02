@@ -9,7 +9,7 @@ void Arguments::printHelp(std::ostream& out)
     out << "  --help\t Print this manual.\n";
     out << "  --proximity-tracker or -pt\n\tLaunch the proximity tracker program.\n";
     out << "  --grandmother-footstep or -gf\n\tLaunch the grandmother footstep grame.\n";
-    out << "  --lidar [step|continuous] or -l [step|continuous]\n\t The type of LiDAR to use.\n";
+    out << "  --lidar [step|continuous|stoped] or -l [step|continuous|stoped]\n\t The type of LiDAR to use.\n";
     out << "NOTE: --proximity-tracker and --grandmother-footstep are mutually exclusive.\n";
 }
 
@@ -48,6 +48,8 @@ void Arguments::parseArgs(int argc, const char* argv[])
                 lidar_ = Lidar::STEP;
             else if (lidar == "continuous")
                 lidar_ = Lidar::CONTINUOUS;
+            else if (lidar == "stoped")
+                lidar_ = Lidar::STOPED;
             else
                 break;
         }

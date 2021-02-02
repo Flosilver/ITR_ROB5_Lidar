@@ -5,6 +5,7 @@
 #include "gmft_game.h"
 #include "lidar_continuous.h"
 #include "lidar_step.h"
+#include "stoped_lidar.h"
 #include "proximity_tracker.h"
 
 int main(int argc, const char* argv[])
@@ -16,6 +17,7 @@ int main(int argc, const char* argv[])
     std::shared_ptr<ShaftEncoder> encoder(new ShaftEncoder("/tmp/encoder", 420));
     encoder->offset(encoder->measureIncrements());
     std::shared_ptr<IRSensor> sensor(new IRSensor(4, 1));
+
     // Build the specified lidar.
     int scan_cooldown(1000);
     std ::shared_ptr<Lidar> lidar;
@@ -25,11 +27,17 @@ int main(int argc, const char* argv[])
         lidar = std::shared_ptr<Lidar>(new LidarStep(motor, sensor, -0.5, 0.5));
         scan_cooldown = 1;
     }
-    else // By default, use a continuous motor
+    else if (args.lidar() == Arguments::Lidar::CONTINUOUS)// By default, use a continuous motor
     {
         std::shared_ptr<DCMotor> motor(new DCMotor(0, 0x14));
         lidar = std::shared_ptr<Lidar>(new LidarContinuous(motor, encoder, sensor, -0.5, 0.5, 100));
     }
+    else
+    {
+        std::shared_ptr<DCMotor> motor(new DCMotor(0, 0x14));
+        lidar = std::shared_ptr<Lidar>(new StopedLidar(motor, encoder, sensor, -0.5, 0.5, 100));
+    }
+    
     // Launch the specified mode.
     if (args.mode() == Arguments::Mode::PROXIMITY_TRACKER)
     {

@@ -1,4 +1,4 @@
-#include "lidar.h"
+#include "stoped_lidar.h"
 #include <iostream>
 #include <memory>
 #include <list>
@@ -9,19 +9,19 @@ int main(void)
     encoder->offset(encoder->measureIncrements());
     std::shared_ptr<DCMotor> motor(new DCMotor(0, 0x14));
     std::shared_ptr<IRSensor> sensor(new IRSensor(4,1));
-    Lidar lidar(motor,encoder,sensor,-0.5,0.5);
+    StopedLidar StopedLidar(motor,encoder,sensor,-0.5,0.5);
 
-    std::list<Lidar::Measure> mes;
+    std::list<StopedLidar::Measure> mes;
 
-    lidar.start();
+    StopedLidar.start();
 
     // Première scan
     std::cout << "Press Enter to continue...";
     std::cin.get();
 
-    mes = lidar.scan();
+    mes = StopedLidar.scan();
     std::cout << "Tableau des mesures: [";
-    for(Lidar::Measure& m : mes)
+    for(StopedLidar::Measure& m : mes)
     {
         std::cout << "(" << m.orientation << " ; " << m.distance << "), ";
     }
@@ -31,9 +31,9 @@ int main(void)
     std::cout << "\nPress Enter to continue...";
     std::cin.get();
 
-    mes = lidar.scan();
+    mes = StopedLidar.scan();
     std::cout << "Tableau des mesures: [";
-    for(Lidar::Measure& m : mes)
+    for(StopedLidar::Measure& m : mes)
     {
         std::cout << "(" << m.orientation << " ; " << m.distance << "), ";
     }

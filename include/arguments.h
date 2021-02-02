@@ -16,7 +16,8 @@ public:
     {
         INVALID = -1,
         STEP,
-        CONTINUOUS
+        CONTINUOUS,
+        STOPED
     };
 
 private:
