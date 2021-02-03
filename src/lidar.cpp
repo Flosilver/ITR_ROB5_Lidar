@@ -15,11 +15,11 @@ float Lidar::normalize(float angle)
     return normalized_angle;
 }
 
-Lidar::Lidar(std::shared_ptr<IRSensor> sensor, float max_angle, float min_angle) :
+Lidar::Lidar(std::shared_ptr<IRSensor> sensor, float max_angle, float min_angle, float angle_increment) :
     sensor_(sensor),
     min_angle_(normalize(min_angle)),
     max_angle_(normalize(max_angle)),
-    angle_increment_(0.05),
+    angle_increment_(angle_increment),
     scan_()
 {
     assert(sensor != nullptr);

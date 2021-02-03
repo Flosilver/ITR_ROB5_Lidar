@@ -6,10 +6,11 @@
 LidarStep::LidarStep(std::shared_ptr<MotorCtrl> pivot,
                      std::shared_ptr<IRSensor> sensor,
                      float max_angle,
-                     float min_angle) :
+                     float min_angle,
+                     unsigned int time_per_measure) :
     Lidar(sensor, min_angle, max_angle),
     pivot_(pivot),
-    motor_sleep_(200)
+    motor_sleep_(time_per_measure)
 {
     assert(pivot != nullptr);
 }

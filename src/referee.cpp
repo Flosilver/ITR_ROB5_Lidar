@@ -4,14 +4,20 @@
 #define WIN_1 "Treatment player 0"
 #define WIN_2 "Treatment player 1"
 
-Referee::Referee(int capture_id, int pan_pin, int tilt_pin, float p_angle, double threshold, size_t lose_thres) :
+Referee::Referee(int capture_id,
+                 int pan_pin,
+                 int tilt_pin,
+                 float p_angle,
+                 double threshold,
+                 size_t lose_thres,
+                 unsigned int treatment_cooldown) :
     CameraPanTilt(capture_id, pan_pin, tilt_pin),
     player_angle_(p_angle),
     target_(Target::NONE),
     do_treatment_(true),
     diff_threshold_(threshold),
     lose_thres_(lose_thres),
-    treatment_cooldown_(500)
+    treatment_cooldown_(treatment_cooldown)
 {
     rotatePan(0.0F);
     auto now(std::chrono::system_clock::now());
@@ -85,7 +91,10 @@ void Referee::process(const cv::Mat& frame)
             int px_value = binary.at<int>(i, j);
             if (px_value > 0) ++diff_px_nb;
         }
-    if (lose_thres_ < diff_px_nb) { std::cout << "Joueur " << target_ << " a bougé! Retourne au point de départ!\n"; }
+    if (lose_thres_ < diff_px_nb)
+    {
+        std::cout << "Player " << target_ << " moved! Go back home player " << target_ << "!\n";
+    }
 
     // Update the target frame
     targets_frame_[target_] = treatment_frame;

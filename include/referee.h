@@ -33,8 +33,15 @@ public:
      * @param p_angle Angular position of players around the center.
      * @param threshold Binarisation threshold of the treatment (0 < thresold < 255).
      * @param lose_thres Threshold to detect an abnormal movement by a player.
+     * @param treatment_cooldown The duration between two image processes (in milliseconds).
      */
-    Referee(int capture_id, int pan_pin, int tilt_pin, float p_angle, double threshold, size_t lose_thres);
+    Referee(int capture_id,
+            int pan_pin,
+            int tilt_pin,
+            float p_angle,
+            double threshold,
+            size_t lose_thres,
+            unsigned int treatment_cooldown = 500);
 
     Referee() = delete;
     Referee(const Referee& other) = delete;

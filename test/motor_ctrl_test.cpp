@@ -14,29 +14,24 @@ int main(void)
     std::cin.get();
 
     motor.rotateAsync(0.1);
-    
+
     std::cout << "Press Enter to continue...";
     std::cin.get();
 
     motor.rotateAsync(0.2);
-    
+
     std::cout << "Press Enter to continue...";
     std::cin.get();
 
     motor.rotateAsync(0.3);
-    
+
     std::cout << "Press Enter to continue...";
     std::cin.get();
 
     motor.rotateAsync(M_PI);
-    
+
     std::cout << "Press Enter to continue...";
     std::cin.get();
-
-    // motor.rotateAsync(0.5);
-
-    // std::cout << "Press Enter to continue...";
-    // std::cin.get();
 
     motor.rotateAsync(0);
 

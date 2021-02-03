@@ -47,8 +47,12 @@ public:
      * @param sensor The IR sensor measuring the distance.
      * @param min_angle The start angle of a measurement (in radians).
      * @param max_angle The end angle of a measurement (in radians).
+     * @param angle_increment The increment between two measurement (in radians).
      */
-    Lidar(std::shared_ptr<IRSensor> sensor, float min_angle = -1.0, float max_angle = 1.0);
+    Lidar(std::shared_ptr<IRSensor> sensor,
+          float min_angle = -1.0,
+          float max_angle = 1.0,
+          float angle_increment = 0.05);
 
     Lidar(const Lidar& other) = delete;
 

@@ -26,11 +26,13 @@ public:
      * @param sensor The IR sensor measuring the distance.
      * @param min_angle The start angle of a measurement (in radians).
      * @param max_angle The end angle of a measurement (in radians).
+     * @param time_per_measure The time taken by each measurement (in milli seconds).
      */
     LidarStep(std::shared_ptr<MotorCtrl> pivot,
               std::shared_ptr<IRSensor> sensor,
               float min_angle = -1.0,
-              float max_angle = 1.0);
+              float max_angle = 1.0,
+              unsigned int time_per_measure = 200);
 
     /**
      * Get the pivot that the IR sensor is attached to.

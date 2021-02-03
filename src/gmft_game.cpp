@@ -23,11 +23,7 @@ GMFTGame::GMFTGame(std::shared_ptr<Lidar> lidar,
     assert(referee_ != nullptr);
 }
 
-GMFTGame::~GMFTGame()
-{
-    is_playing_.store(false);
-    game_thread_.join();
-}
+GMFTGame::~GMFTGame() { stop(); }
 
 void GMFTGame::play()
 {
@@ -41,11 +37,8 @@ void GMFTGame::play()
 
 void GMFTGame::stop()
 {
-    if (is_playing_.load())
-    {
-        is_playing_.store(false);
-        game_thread_.join();
-    }
+    is_playing_.store(false);
+    if (game_thread_.joinable()) { game_thread_.join(); }
 }
 
 void GMFTGame::gamePlay()
@@ -64,7 +57,6 @@ void GMFTGame::gamePlay()
         // Measure the current players positions.
         ir_scan = lidar_->scan();
         extractPositions(ir_scan, current_pos[0], current_pos[1]);
-        std::cout << "P0: " << current_pos[0] << "\t P1: " << current_pos[1] << std::endl;
         // Determine who the referee has to check.
         for (int i = 0; i < 2; i++)
         {

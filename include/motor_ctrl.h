@@ -17,7 +17,7 @@ class MotorCtrl : public DCMotor
     std::mutex ctrl_mtx_; ///< The mutex used by the control thread.
     bool is_controlled_; ///< Whether the control loop should keep running or not.
     float desired_orientation_; ///< The desired shaft orientation (in radians).
-    const int sp_; ///< The sampling period (in microseconds).
+    const unsigned int sp_; ///< The sampling period (in microseconds).
     const float kp_; ///< The proportional gain of the PI corrector.
     const float ki_; ///< The integral gain of the PI corrector.
     const float anti_windup_; ///< The threshold at which to freeze the integral.
@@ -32,6 +32,7 @@ public:
      * @param encoder The encoder attached on the shaft.
      * @param kp The proportional gain of the PI corrector.
      * @param ki The integral gain of the PI corrector.
+     * @param sampling_period The sampling period (in micro seconds).
      */
     MotorCtrl(int pin,
               int i2c_addr,
@@ -39,7 +40,8 @@ public:
               float kp = 500.0,
               float ki = 2,
               float anti_windup = 50.0,
-              int max_speed = 100);
+              int max_speed = 100,
+              unsigned int sampling_period = 1000);
 
     MotorCtrl(const MotorCtrl& other) = delete;
 

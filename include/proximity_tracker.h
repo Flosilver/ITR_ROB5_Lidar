@@ -9,12 +9,12 @@
 
 class ProximityTracker
 {
-    bool is_running_; ///< Flag for the thread
-    std::thread tracker_thread_; ///< Thread of the track
-    std::mutex tracker_mutex_; ///< mutex for flag gestion
-    std::shared_ptr<Lidar> lidar_; ///< Pointer to the Lidar
-    std::shared_ptr<CameraPanTilt> camera_; ///< Pointer to the CameraPanTilt
-    std::chrono::milliseconds track_sleep_;
+    bool is_running_; ///< The flag for the thread
+    std::thread tracker_thread_; ///< The thread handling the tracking
+    std::mutex tracker_mutex_; ///< The mutex for flag gestion
+    std::shared_ptr<Lidar> lidar_; ///< The pointer to the Lidar
+    std::shared_ptr<CameraPanTilt> camera_; ///< The pointer to the CameraPanTilt
+    std::chrono::milliseconds track_sleep_; ///< The time to sleep between two iterations
 
 public:
     /**

@@ -6,17 +6,18 @@
 #include <iostream>
 
 StopedLidar::StopedLidar(std::shared_ptr<DCMotor> pivot,
-                                 std::shared_ptr<ShaftEncoder> encoder,
-                                 std::shared_ptr<IRSensor> sensor,
-                                 int motor_speed,
-                                 float stop_angle) :
+                         std::shared_ptr<ShaftEncoder> encoder,
+                         std::shared_ptr<IRSensor> sensor,
+                         unsigned int motor_speed,
+                         float stop_angle,
+                         unsigned int motor_sleep,
+                         unsigned int motor_cool) :
     Lidar(sensor, -1.0, 1.0),
     pivot_(pivot),
     encoder_(encoder),
     motor_speed_(motor_speed),
-    motor_sleep_(20),
-    motor_stuck_(100),
-    unstuck_cooldown_(500),
+    motor_sleep_(motor_sleep),
+    motor_stuck_(motor_cool),
     is_measuring_(false),
     meas_mtx_(),
     meas_thread_(),
@@ -24,7 +25,6 @@ StopedLidar::StopedLidar(std::shared_ptr<DCMotor> pivot,
 {
     assert(pivot != nullptr);
     assert(encoder != nullptr);
-    assert(0 < motor_speed_);
 }
 
 StopedLidar::~StopedLidar() { stop(); }
@@ -48,11 +48,8 @@ void StopedLidar::start()
 
 void StopedLidar::stop()
 {
-    if (is_measuring_.load())
-    {
-        is_measuring_.store(false); // End the thread
-        meas_thread_.join(); // Wait for the thread to end
-    }
+    is_measuring_.store(false); // End the thread
+    if (meas_thread_.joinable()) { meas_thread_.join(); } // Wait for the thread to end
 }
 
 void StopedLidar::measureTask()
@@ -106,7 +103,7 @@ void StopedLidar::measureTask()
         {
             old_pos = pos;
             StopedLidar::Measure measure{.orientation = encoder_->measurePosition() + stop_angle_,
-                                             .distance = sensor_->measure()};
+                                         .distance = sensor_->measure()};
             mes_tab.push_back(measure);
         }
         std::this_thread::sleep_for(motor_sleep_);

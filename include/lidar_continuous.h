@@ -7,12 +7,12 @@
 #include <memory>
 #include <mutex>
 #include <thread>
-#include "lidar.h"
 #include "dc_motor.h"
 #include "ir_sensor.h"
+#include "lidar.h"
 #include "shaft_encoder.h"
 
-class LidarContinuous: public Lidar
+class LidarContinuous : public Lidar
 {
 private:
     const std::shared_ptr<DCMotor> pivot_; ///< The pivot that the IR sensor is attached to.
@@ -37,13 +37,20 @@ public:
      * @param sensor The IR sensor measuring the distance.
      * @param min_angle The start angle of a measurement (in radians).
      * @param max_angle The end angle of a measurement (in radians).
+     * @param motor_speed The speed of the motor.
+     * @param motor_sleep Sleep duration between motor position checks (in milli seconds).
+     * @param motor_stuck Duration after which the motor is considered stuck (in milli seconds).
+     * @param motor_cool Cool down duration between trial of unstucking the motor (in milli seconds).
      */
     LidarContinuous(std::shared_ptr<DCMotor> pivot,
-          std::shared_ptr<ShaftEncoder> encoder,
-          std::shared_ptr<IRSensor> sensor,
-          float min_angle = -1.0,
-          float max_angle = 1.0,
-          int motor_speed = 100);
+                    std::shared_ptr<ShaftEncoder> encoder,
+                    std::shared_ptr<IRSensor> sensor,
+                    float min_angle = -1.0,
+                    float max_angle = 1.0,
+                    unsigned int motor_speed = 100,
+                    unsigned int motor_sleep = 20,
+                    unsigned int motor_stuck = 100,
+                    unsigned int motor_cool = 500);
 
     LidarContinuous(const LidarContinuous& other) = delete;
 

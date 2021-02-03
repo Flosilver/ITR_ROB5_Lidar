@@ -34,14 +34,11 @@ void ProximityTracker::start()
 
 void ProximityTracker::stop()
 {
-    if (is_running_)
     {
-        {
-            std::lock_guard<std::mutex> tracker_lock(tracker_mutex_);
-            is_running_ = false;
-        }
-        tracker_thread_.join();
+        std::lock_guard<std::mutex> tracker_lock(tracker_mutex_);
+        is_running_ = false;
     }
+    if (tracker_thread_.joinable()) tracker_thread_.join();
 }
 
 void ProximityTracker::track()
@@ -57,20 +54,19 @@ void ProximityTracker::track()
     while (keep_running)
     {
         // Search the nearest obstacle
+        min_measure.orientation = NAN;
         min_measure.distance = 1E10F;
         ir_scan = lidar_->scan();
         for (Lidar::Measure& measure : ir_scan)
         {
-            std::cout << "(" << measure.orientation / M_PI * 180.0 << ", " << measure.distance << "), ";
             if (measure.distance < min_measure.distance) min_measure = measure;
         }
-        std::cout << std::endl;
 
         // Rotate to the nearest obstacle
-        if (min_measure.distance < 0.75F) // Ensure an object has been detected
+        if (!std::isnan(min_measure.distance) && min_measure.distance < 0.75F) // Ensure an object has been detected
         {
-            std::cout << "Object detected at " << min_measure.orientation / M_PI * 180.0 << "° and " << min_measure.distance
-                      << " m\n";
+            std::cout << "Object detected at " << min_measure.orientation / M_PI * 180.0 << "° and "
+                      << min_measure.distance << " m\n";
             camera_->rotatePan(min_measure.orientation);
         }
 

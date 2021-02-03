@@ -9,7 +9,7 @@
 
 ServoMotor::ServoMotor(int nb_pin, int min_duty, int max_duty) :
     pin_(nb_pin),
-    angle_(0.0F),
+    angle_(NAN),
     min_(min_duty),
     delta_(max_duty - min_duty)
 {

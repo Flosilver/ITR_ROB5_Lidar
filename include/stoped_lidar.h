@@ -3,17 +3,17 @@
 
 #include <atomic>
 #include <chrono>
+#include <cmath>
 #include <list>
 #include <memory>
 #include <mutex>
 #include <thread>
-#include <cmath>
-#include "lidar.h"
 #include "dc_motor.h"
 #include "ir_sensor.h"
+#include "lidar.h"
 #include "shaft_encoder.h"
 
-class StopedLidar: public Lidar
+class StopedLidar : public Lidar
 {
 private:
     const std::shared_ptr<DCMotor> pivot_; ///< The pivot that the IR sensor is attached to.
@@ -21,7 +21,6 @@ private:
     const int motor_speed_; ///< The motor rotating speed.
     std::chrono::milliseconds motor_sleep_; ///< The time to sleep after a desired angle is given to the motor.
     std::chrono::milliseconds motor_stuck_; ///< The duration threshold to consider the motor to be stuck.
-    std::chrono::milliseconds unstuck_cooldown_; ///< The cool down before trying to unstuck the motor.
     std::atomic<bool> is_measuring_; ///< The flag controlling the infinite loop in the thread.
     std::mutex meas_mtx_; ///< The mutex used to synchronize operations around the measurements.
     std::thread meas_thread_; ///< The thread that performs the measurements.
@@ -37,12 +36,18 @@ public:
      *
      * @param pivot The pivot that the IR sensor is attached to.
      * @param sensor The IR sensor measuring the distance.
+     * @param motor_speed The speed of the motor.
+     * @param stop_angle The angle of the stop (in radians).
+     * @param motor_sleep Sleep duration between motor position checks (in milli seconds).
+     * @param motor_cool Cool down duration between trial of unstucking the motor (in milli seconds).
      */
     StopedLidar(std::shared_ptr<DCMotor> pivot,
-          std::shared_ptr<ShaftEncoder> encoder,
-          std::shared_ptr<IRSensor> sensor,
-          int motor_speed = 50,
-          float stop_angle = -M_PI / 4);
+                std::shared_ptr<ShaftEncoder> encoder,
+                std::shared_ptr<IRSensor> sensor,
+                unsigned int motor_speed = 50,
+                float stop_angle = -M_PI / 4,
+                unsigned int motor_sleep = 20,
+                unsigned int motor_cool = 100);
 
     StopedLidar(const StopedLidar& other) = delete;
 
