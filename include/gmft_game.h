@@ -39,8 +39,8 @@ public:
              std::shared_ptr<Referee> referee,
              float player_angle,
              float opening,
-             float seuil,
-             float victory_thresh = 0.08);
+             float moved_threshold,
+             float victory_thresh = 0.15);
 
     /**
      * Destroy the GMFTGame.
