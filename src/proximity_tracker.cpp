@@ -61,8 +61,10 @@ void ProximityTracker::track()
         ir_scan = lidar_->scan();
         for (Lidar::Measure& measure : ir_scan)
         {
+            std::cout << "(" << measure.orientation / M_PI * 180.0 << ", " << measure.distance << "), ";
             if (measure.distance < min_measure.distance) min_measure = measure;
         }
+        std::cout << std::endl;
 
         // Rotate to the nearest obstacle
         if (min_measure.distance < 0.75F) // Ensure an object has been detected

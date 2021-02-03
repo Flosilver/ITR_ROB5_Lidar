@@ -8,11 +8,9 @@
 StopedLidar::StopedLidar(std::shared_ptr<DCMotor> pivot,
                                  std::shared_ptr<ShaftEncoder> encoder,
                                  std::shared_ptr<IRSensor> sensor,
-                                 float max_angle,
-                                 float min_angle,
                                  int motor_speed,
                                  float stop_angle) :
-    Lidar(sensor, min_angle, max_angle),
+    Lidar(sensor, -1.0, 1.0),
     pivot_(pivot),
     encoder_(encoder),
     motor_speed_(100),
@@ -88,7 +86,7 @@ void StopedLidar::measureTask()
             last_change = std::chrono::system_clock::now();
             pivot_->run(speed);
             do_mes = true;
-            encoder_->offset(encoder_->measureIncrements());
+            encoder_->offset(encoder_->measureIncrements() + encoder_->offset());
         }
         else if (is_stuck && 0 < speed)
         {
@@ -107,7 +105,7 @@ void StopedLidar::measureTask()
         if (do_mes && angle_increment_ < std::abs(old_pos - pos))
         {
             old_pos = pos;
-            StopedLidar::Measure measure{.orientation = encoder_->measurePosition() - stop_angle_,
+            StopedLidar::Measure measure{.orientation = encoder_->measurePosition() + stop_angle_,
                                              .distance = sensor_->measure()};
             mes_tab.push_back(measure);
         }

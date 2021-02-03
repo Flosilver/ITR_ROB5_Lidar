@@ -14,7 +14,7 @@ int main(int argc, const char* argv[])
     Arguments args(argc, argv);
     wiringPiSetup(); // Setup the library.
     // Create common objects.
-    std::shared_ptr<ShaftEncoder> encoder(new ShaftEncoder("/tmp/encoder", 420));
+    std::shared_ptr<ShaftEncoder> encoder(new ShaftEncoder("/tmp/encoder", 267));
     encoder->offset(encoder->measureIncrements());
     std::shared_ptr<IRSensor> sensor(new IRSensor(4, 1));
 
@@ -35,9 +35,9 @@ int main(int argc, const char* argv[])
     else
     {
         std::shared_ptr<DCMotor> motor(new DCMotor(0, 0x14));
-        lidar = std::shared_ptr<Lidar>(new StopedLidar(motor, encoder, sensor, -0.5, 0.5, 100));
+        lidar = std::shared_ptr<Lidar>(new StopedLidar(motor, encoder, sensor, 100));
     }
-    
+
     // Launch the specified mode.
     if (args.mode() == Arguments::Mode::PROXIMITY_TRACKER)
     {

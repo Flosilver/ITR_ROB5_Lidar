@@ -37,16 +37,12 @@ public:
      *
      * @param pivot The pivot that the IR sensor is attached to.
      * @param sensor The IR sensor measuring the distance.
-     * @param min_angle The start angle of a measurement (in radians).
-     * @param max_angle The end angle of a measurement (in radians).
      */
     StopedLidar(std::shared_ptr<DCMotor> pivot,
           std::shared_ptr<ShaftEncoder> encoder,
           std::shared_ptr<IRSensor> sensor,
-          float min_angle = -1.0,
-          float max_angle = 1.0,
-          int motor_speed = 100,
-          float stop_angle = M_PI/4);
+          int motor_speed = 50,
+          float stop_angle = -M_PI / 4);
 
     StopedLidar(const StopedLidar& other) = delete;
 
