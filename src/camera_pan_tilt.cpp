@@ -1,6 +1,7 @@
 #include "camera_pan_tilt.h"
 #include <cassert>
 #include <functional>
+#include <chrono>
 
 CameraPanTilt::CameraPanTilt(int capture_id, int pan_pin, int tilt_pin) :
     pan_(),
@@ -24,12 +25,16 @@ CameraPanTilt::~CameraPanTilt()
 void CameraPanTilt::rotatePan(float angle)
 {
     pan_->rotate(angle);
+    std::chrono::milliseconds duration(250);
+    std::this_thread::sleep_for(duration);
     pan_->stop();
 }
 
 void CameraPanTilt::rotateTilt(float angle)
 {
     tilt_->rotate(angle);
+    std::chrono::milliseconds duration(250);
+    std::this_thread::sleep_for(duration);
     tilt_->stop();
 }
 

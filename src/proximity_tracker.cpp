@@ -50,6 +50,7 @@ void ProximityTracker::track()
     // Start utility objects
     lidar_->start();
     camera_->display();
+    camera_->rotatePan(0.0);
 
     while (keep_running)
     {
