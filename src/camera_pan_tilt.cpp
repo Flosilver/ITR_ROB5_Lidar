@@ -21,9 +21,17 @@ CameraPanTilt::~CameraPanTilt()
     capture_.release();
 }
 
-void CameraPanTilt::rotatePan(float angle) { pan_->rotate(angle); }
+void CameraPanTilt::rotatePan(float angle)
+{
+    pan_->rotate(angle);
+    pan_->stop();
+}
 
-void CameraPanTilt::rotateTilt(float angle) { tilt_->rotate(angle); }
+void CameraPanTilt::rotateTilt(float angle)
+{
+    tilt_->rotate(angle);
+    tilt_->stop();
+}
 
 void CameraPanTilt::display()
 {

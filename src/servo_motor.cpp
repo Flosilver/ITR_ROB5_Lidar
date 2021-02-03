@@ -38,4 +38,10 @@ void ServoMotor::rotate(float angle)
 
     softPwmWrite(pin_, duty_cycle); // Apply the new duty cycle
     angle_ = ((duty_cycle - min_) / delta_ - 0.5) * M_PI; // Store the actual desired angle
+
+}
+
+void ServoMotor::stop() const
+{
+    softPwmWrite(pin_, 0);
 }

@@ -64,6 +64,12 @@ public:
      * @param angle the desired angle (in radians).
      */
     void rotate(float angle);
+
+    /**
+     * @brief Stop the servo motor at its current location
+     * 
+     */
+    void stop() const;
 };
 
 #endif
