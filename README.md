@@ -16,14 +16,14 @@ make install
 Revenir dans le dossier du projet et compiler le projet !
 
 ```bash
-cd..
+cd ..
 make
 ```
 
 ## 2. Lancer le programme
 
 ```bash
-./itr-project <--proximity-tracker|-pt> [--lidar [step|continuous]]
+./itr-project <--proximity-tracker|-pt> [--lidar [step|continuous|stoped]]
 ```
 
 La commande ci-dessus permet de démarrer le programme en mode *Figure imposée*.
