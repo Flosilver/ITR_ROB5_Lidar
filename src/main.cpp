@@ -49,7 +49,7 @@ int main(int argc, const char* argv[])
     }
     else if (args.mode() == Arguments::Mode::GRANDMOTHER_FOOTSTEP)
     {
-        std::shared_ptr<Referee> ref(new Referee(0, 22, 0, 0.5, 25., 3000));
+        std::shared_ptr<Referee> ref(new Referee(0, 22, 0, 0.5, 15., 500));
         GMFTGame gmft(lidar, ref, 0.4, 0.1, 0.05, 0.3);
         gmft.play();
         std::cout << "Press <Enter> to terminate.\n";
