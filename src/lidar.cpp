@@ -19,7 +19,7 @@ Lidar::Lidar(std::shared_ptr<IRSensor> sensor, float max_angle, float min_angle)
     sensor_(sensor),
     min_angle_(normalize(min_angle)),
     max_angle_(normalize(max_angle)),
-    angle_increment_(0.1),
+    angle_increment_(0.05),
     scan_()
 {
     assert(sensor != nullptr);

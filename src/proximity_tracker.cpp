@@ -69,7 +69,7 @@ void ProximityTracker::track()
         // Rotate to the nearest obstacle
         if (min_measure.distance < 0.75F) // Ensure an object has been detected
         {
-            std::cout << "Object detected at " << min_measure.orientation << " rad and " << min_measure.distance
+            std::cout << "Object detected at " << min_measure.orientation / M_PI * 180.0 << "° and " << min_measure.distance
                       << " m\n";
             camera_->rotatePan(min_measure.orientation);
         }
