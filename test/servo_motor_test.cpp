@@ -11,14 +11,14 @@ int main(int argc, char const* argv[])
 
     std::cout << "Rotate to origin (0 rad)" << std::endl;
     sm.rotate(0);
-    sm.stop();
+    // sm.stop();
 
     std::cout << "Press Enter to continue...";
     std::cin.get();
 
     std::cout << "Rotate to pi rad" << std::endl;
     sm.rotate(M_PI/2);
-    sm.stop();
+    // sm.stop();
     std::cout << "Press Enter to continue...";
     std::cin.get();
 
@@ -30,8 +30,9 @@ int main(int argc, char const* argv[])
 
     std::cout << "Rotate to origin (0 rad)" << std::endl;
     sm.rotate(0);
-    sm.stop();
+    // sm.stop();
     std::cout << "Press Enter to exit...";
     std::cin.get();
+    sm.stop();
     return 0;
 }
