@@ -86,17 +86,6 @@ public:
     std::shared_ptr<ShaftEncoder> encoder() { return encoder_; }
 
     /**
-     * Get the IR sensor measuring the distance.
-     *
-     * @return the IR sensor measuring the distance.
-     */
-    std::shared_ptr<const IRSensor> sensor() const { return sensor_; }
-    /**
-     * @overload sensor()
-     */
-    std::shared_ptr<IRSensor> sensor() { return sensor_; }
-
-    /**
      * Get the time to sleep after a desired angle is given to the motor.
      *
      * @return the time to sleep after a desired angle is given to the motor.

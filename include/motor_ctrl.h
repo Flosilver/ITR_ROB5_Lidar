@@ -84,7 +84,7 @@ public:
      *
      * @return The sampling period (in microseconds).
      */
-    int samplingPeriode() const { return sp_; }
+    int samplingPeriod() const { return sp_; }
 
     /**
      * The desired orientation of the shaft.
